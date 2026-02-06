@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalkSign PRD - Native Document Signing for Talkpush Onboarding</title>
+    <style>
+        :root {
+            --talkpush-green: #00E676;
+            --talkpush-green-dark: #00C853;
+            --navy: #2C3E50;
+            --dark-bg: #1A252F;
+            --light-gray: #F5F7FA;
+            --medium-gray: #ECF0F1;
+            --text-dark: #2C3E50;
+            --text-light: #7F8C8D;
+            --text-muted: #95A5A6;
+            --accent-blue: #2196F3;
+            --accent-orange: #FF9800;
+            --error-red: #F44336;
+            --success-green: #00E676;
+            --warning-orange: #FFA726;
+            --border-light: #E0E0E0;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background: var(--light-gray);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--navy);
+            color: white;
+            overflow-y: auto;
+            z-index: 100;
+            padding: 24px 0;
+        }
+        .nav-logo {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 16px;
+        }
+        .nav-logo h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .nav-logo .green { color: var(--talkpush-green); }
+        .nav-logo p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav a {
+            display: block;
+            padding: 10px 24px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .nav a:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border-left-color: var(--talkpush-green);
+        }
+        .nav .nav-section {
+            padding: 16px 24px 6px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main {
+            margin-left: 280px;
+            padding: 40px 60px;
+            max-width: 1100px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--dark-bg) 100%);
+            color: white;
+            padding: 48px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+        .header .badge {
+            display: inline-block;
+            background: var(--talkpush-green);
+            color: var(--navy);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+        .header h1 .green { color: var(--talkpush-green); }
+        .header .subtitle {
+            font-size: 16px;
+            color: rgba(255,255,255,0.75);
+            max-width: 700px;
+        }
+        .header-meta {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+        .header-meta div {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        .header-meta div strong {
+            display: block;
+            font-size: 14px;
+            color: white;
+            margin-top: 2px;
+        }
+
+        /* Sections */
+        section { margin-bottom: 48px; }
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--talkpush-green);
+            display: inline-block;
+        }
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 24px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-light);
+        }
+        .card h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 12px;
+        }
+        .card p, .card li {
+            font-size: 14px;
+            color: #4A5568;
+            line-height: 1.7;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+        thead th {
+            background: var(--navy);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        thead th:first-child { border-radius: 8px 0 0 0; }
+        thead th:last-child { border-radius: 0 8px 0 0; }
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #EDF2F7;
+            vertical-align: top;
+        }
+        tbody tr:hover { background: #F7FAFC; }
+
+        /* Priority badges */
+        .p0 { background: #FFEBEE; color: #C62828; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .p1 { background: #FFF3E0; color: #E65100; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .p2 { background: #E3F2FD; color: #1565C0; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+
+        /* Highlight boxes */
+        .highlight {
+            background: #E8F5E9;
+            border-left: 4px solid var(--talkpush-green);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        .highlight.warning {
+            background: #FFF8E1;
+            border-left-color: var(--warning-orange);
+        }
+        .highlight.info {
+            background: #E3F2FD;
+            border-left-color: var(--accent-blue);
+        }
+        .highlight.critical {
+            background: #FFEBEE;
+            border-left-color: var(--error-red);
+        }
+
+        /* Lists */
+        ul, ol { padding-left: 20px; margin: 8px 0; }
+        li { margin-bottom: 6px; font-size: 14px; }
+
+        /* Code blocks */
+        code {
+            background: #F1F5F9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            color: #E53935;
+        }
+        pre {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 16px 0;
+        }
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        /* Grid layouts */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+        /* Flow diagram */
+        .flow-step {
+            text-align: center;
+            padding: 16px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid var(--border-light);
+            position: relative;
+        }
+        .flow-step.active { border-color: var(--talkpush-green); }
+        .flow-step .step-num {
+            background: var(--talkpush-green);
+            color: var(--navy);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .flow-step h4 { font-size: 14px; margin-bottom: 4px; }
+        .flow-step p { font-size: 12px; color: var(--text-light); }
+
+        /* User story cards */
+        .user-story {
+            background: linear-gradient(135deg, #F8FFF8, white);
+            border-left: 4px solid var(--talkpush-green);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+        }
+        .user-story .as { color: var(--accent-blue); font-weight: 600; }
+        .user-story .want { color: var(--navy); font-weight: 600; }
+        .user-story .so { color: var(--talkpush-green-dark); font-weight: 600; }
+
+        /* Wireframe placeholder */
+        .wireframe {
+            background: #FAFBFC;
+            border: 2px dashed var(--border-light);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 20px 0;
+        }
+        .wireframe-header {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        /* Metric cards */
+        .metric-card {
+            text-align: center;
+            padding: 24px 16px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-light);
+        }
+        .metric-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--talkpush-green);
+        }
+        .metric-card .label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* Acceptance criteria */
+        .ac-list { list-style: none; padding: 0; }
+        .ac-list li {
+            padding: 8px 0 8px 28px;
+            position: relative;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        .ac-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--talkpush-green);
+            font-weight: 700;
+        }
+
+        /* Schema diagram styling */
+        .schema-table {
+            font-size: 12px;
+        }
+        .schema-table td:first-child {
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-blue);
+        }
+        .schema-table td:nth-child(2) {
+            font-family: 'SF Mono', monospace;
+            font-size: 11px;
+            color: #7C3AED;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+    <div class="nav-logo">
+        <h2>Talk<span class="green">Sign</span></h2>
+        <p>Product Requirements</p>
+    </div>
+
+    <div class="nav-section">Overview</div>
+    <a href="#overview">Executive Summary</a>
+    <a href="#problem">Problem Statement</a>
+    <a href="#goals">Goals &amp; Success Metrics</a>
+
+    <div class="nav-section">Solution</div>
+    <a href="#architecture">Solution Architecture</a>
+    <a href="#template-mgmt">Template Management</a>
+    <a href="#field-placement">Field Placement &amp; Types</a>
+    <a href="#data-mapping">Data Mapping &amp; Auto-Fill</a>
+    <a href="#signing-experience">Signing Experience</a>
+    <a href="#signing-link">Signing Link Generation</a>
+    <a href="#status-tracking">Status Tracking &amp; Audit</a>
+    <a href="#reminders">Reminders &amp; Expiration</a>
+    <a href="#storage">Document Storage</a>
+
+    <div class="nav-section">Technical</div>
+    <a href="#data-model">Data Model</a>
+    <a href="#api">API Design</a>
+    <a href="#security">Security &amp; Compliance</a>
+    <a href="#integration">Talkpush Integration</a>
+
+    <div class="nav-section">Delivery</div>
+    <a href="#user-stories">User Stories</a>
+    <a href="#ui-design">UI Design</a>
+    <a href="#phases">Phased Rollout</a>
+    <a href="#risks">Risks &amp; Mitigations</a>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+    <!-- Header -->
+    <div class="header" id="overview">
+        <span class="badge">PRD &mdash; P0 Critical</span>
+        <h1>Talk<span class="green">Sign</span></h1>
+        <p class="subtitle">Native document signing built into Talkpush Onboarding &mdash; replacing DocuSign with a purpose-built, high-volume hiring solution that is faster, cheaper, and fully integrated.</p>
+        <div class="header-meta">
+            <div>Product<strong>Onboarding</strong></div>
+            <div>Priority<strong>P0 &mdash; Critical</strong></div>
+            <div>Version<strong>1.0</strong></div>
+            <div>Date<strong>February 2026</strong></div>
+        </div>
+    </div>
+
+    <!-- ===================== EXECUTIVE SUMMARY ===================== -->
+    <section>
+        <h2 class="section-title">Executive Summary</h2>
+        <div class="card">
+            <p>TalkSign is Talkpush's native document signing solution designed to replace DocuSign within the onboarding workflow. Rather than replicating DocuSign's full feature set, TalkSign focuses exclusively on the high-volume hiring use case: recruiters configure document templates for a campaign, candidates receive a unique signing link, auto-filled fields populate from their Talkpush profile, and remaining fields are completed and signed by the candidate on any device.</p>
+
+            <div class="highlight" style="margin-top:20px;">
+                <strong>Key differentiator:</strong> The signing link is stored as a candidate attribute in Talkpush, enabling it to be sent via any channel the platform already supports &mdash; WhatsApp, SMS, Messenger, email &mdash; through existing automation workflows. No separate sending infrastructure is needed.
+            </div>
+
+            <div class="grid-3" style="margin-top:24px;">
+                <div class="metric-card">
+                    <div class="value">$0</div>
+                    <div class="label">Per-envelope cost<br>(vs. $1.50&ndash;$2.50 DocuSign)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">100%</div>
+                    <div class="label">Integrated with<br>Talkpush candidate data</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">&lt;60s</div>
+                    <div class="label">Target candidate<br>signing time</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== PROBLEM STATEMENT ===================== -->
+    <section id="problem">
+        <h2 class="section-title">Problem Statement</h2>
+        <div class="card">
+            <h3>Current Pain Points with DocuSign</h3>
+            <div class="grid-2">
+                <div>
+                    <h4 style="color:var(--error-red); font-size:14px; margin-bottom:8px;">Cost</h4>
+                    <ul>
+                        <li>Per-envelope fees ($1.50&ndash;$2.50) add up significantly in high-volume hiring (1,000+ hires/month)</li>
+                        <li>Enterprise licensing costs for API access</li>
+                        <li>Additional charges for premium features like bulk send</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color:var(--error-red); font-size:14px; margin-bottom:8px;">Integration Friction</h4>
+                    <ul>
+                        <li>Candidate data must be synced to DocuSign then back &mdash; creating latency and sync errors</li>
+                        <li>Signing links are generated externally and must be imported back to Talkpush</li>
+                        <li>Status updates require webhook management with a third-party system</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color:var(--error-red); font-size:14px; margin-bottom:8px;">Feature Mismatch</h4>
+                    <ul>
+                        <li>DocuSign is built for general e-signatures, not optimized for recruitment onboarding</li>
+                        <li>Talkpush uses ~20% of DocuSign's features but pays for 100%</li>
+                        <li>No native understanding of campaigns, candidate profiles, or hiring workflows</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color:var(--error-red); font-size:14px; margin-bottom:8px;">Candidate Experience</h4>
+                    <ul>
+                        <li>Candidates are redirected to DocuSign's UI &mdash; a jarring experience outside the Talkpush flow</li>
+                        <li>DocuSign requires consent screens and account prompts that add friction</li>
+                        <li>No branding continuity between Talkpush onboarding and signing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== GOALS & METRICS ===================== -->
+    <section id="goals">
+        <h2 class="section-title">Goals &amp; Success Metrics</h2>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Goal</th>
+                        <th>Metric</th>
+                        <th>Target</th>
+                        <th>Measurement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Eliminate external costs</strong></td>
+                        <td>Per-envelope cost</td>
+                        <td>$0 (internal cost only)</td>
+                        <td>Finance tracking</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reduce signing friction</strong></td>
+                        <td>Average candidate signing time</td>
+                        <td>&lt; 60 seconds</td>
+                        <td>Session analytics</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Increase completion rate</strong></td>
+                        <td>Document signing completion rate</td>
+                        <td>&ge; 90% (vs. ~75% with DocuSign)</td>
+                        <td>Status tracking</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Seamless integration</strong></td>
+                        <td>Manual steps to send signing request</td>
+                        <td>0 (fully automated)</td>
+                        <td>Workflow audit</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Legal compliance</strong></td>
+                        <td>Audit trail completeness</td>
+                        <td>100% court-admissible</td>
+                        <td>Legal review</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mobile-first experience</strong></td>
+                        <td>Mobile signing success rate</td>
+                        <td>&ge; 95%</td>
+                        <td>Device analytics</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== SOLUTION ARCHITECTURE ===================== -->
+    <section id="architecture">
+        <h2 class="section-title">Solution Architecture</h2>
+        <p class="section-subtitle">End-to-end flow from template setup to completed, stored documents</p>
+
+        <div class="card">
+            <h3>High-Level Flow</h3>
+            <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-top:16px;">
+                <div class="flow-step active">
+                    <div class="step-num">1</div>
+                    <h4>Upload Template</h4>
+                    <p>Admin uploads PDF document</p>
+                </div>
+                <div class="flow-step active">
+                    <div class="step-num">2</div>
+                    <h4>Place Fields</h4>
+                    <p>Drag &amp; drop fields on document</p>
+                </div>
+                <div class="flow-step active">
+                    <div class="step-num">3</div>
+                    <h4>Map Data</h4>
+                    <p>Link fields to Talkpush attributes or candidate input</p>
+                </div>
+                <div class="flow-step active">
+                    <div class="step-num">4</div>
+                    <h4>Assign to Campaign</h4>
+                    <p>Select documents for campaign</p>
+                </div>
+                <div class="flow-step active">
+                    <div class="step-num">5</div>
+                    <h4>Generate Link</h4>
+                    <p>Unique signing URL stored as candidate attribute</p>
+                </div>
+                <div class="flow-step active">
+                    <div class="step-num">6</div>
+                    <h4>Candidate Signs</h4>
+                    <p>Mobile-first signing experience</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>System Components</h3>
+            <pre><code>+------------------------------------------------------------------+
+|                      TALKPUSH PLATFORM                           |
+|                                                                  |
+|  +--------------------------+  +-----------------------------+   |
+|  |   TALKSIGN ADMIN UI      |  |   CAMPAIGN CONFIGURATION    |   |
+|  |   (Template Builder)      |  |   (Document Selection)      |   |
+|  +-----------+--------------+  +-------------+---------------+   |
+|              |                               |                   |
+|  +-----------v-------------------------------v---------------+   |
+|  |              TALKSIGN ENGINE                              |   |
+|  |                                                           |   |
+|  |  +-------------+  +------------+  +------------------+    |   |
+|  |  | Template     |  | Field      |  | Document         |    |   |
+|  |  | Manager      |  | Mapper     |  | Generator (PDF)  |    |   |
+|  |  +-------------+  +------------+  +------------------+    |   |
+|  |                                                           |   |
+|  |  +-------------+  +------------+  +------------------+    |   |
+|  |  | Signing Link |  | Audit      |  | Reminder         |    |   |
+|  |  | Generator    |  | Logger     |  | Scheduler        |    |   |
+|  |  +-------------+  +------------+  +------------------+    |   |
+|  +-----------------------------------------------------------+   |
+|              |                               |                   |
+|  +-----------v--------------+  +-------------v---------------+   |
+|  | CANDIDATE SIGNING UI     |  | CANDIDATE ATTRIBUTE STORE   |   |
+|  | (Mobile-first Web App)   |  | (signing_url, status, etc.) |   |
+|  +--------------------------+  +-----------------------------+   |
+|                                                                  |
+|  +-----------------------------------------------------------+  |
+|  |           DOCUMENT STORAGE (Encrypted at rest)             |  |
+|  +-----------------------------------------------------------+  |
++------------------------------------------------------------------+</code></pre>
+        </div>
+    </section>
+
+    <!-- ===================== MODULE 1: TEMPLATE MANAGEMENT ===================== -->
+    <section id="template-mgmt">
+        <h2 class="section-title">Module 1: Template Management</h2>
+        <p class="section-subtitle">Upload, configure, and manage reusable document templates</p>
+
+        <div class="card">
+            <h3>1.1 Template Upload</h3>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-001</code></td>
+                        <td>PDF Upload</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Upload PDF documents as signing templates. Support drag-and-drop and file browser. Max file size: 25 MB. Multi-page documents supported.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-002</code></td>
+                        <td>Template Naming &amp; Metadata</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Name, description, document category (offer letter, NDA, contract, policy acknowledgment, tax form, custom), and version number for each template.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-003</code></td>
+                        <td>Template Versioning</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>Maintain version history of templates. New version can be created from existing. Active campaigns continue using the version assigned at creation. New campaigns use latest version.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-004</code></td>
+                        <td>Template Preview</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Full preview of the template with all fields rendered, showing how it will appear to the candidate. Include a "Preview as candidate" mode that shows auto-filled sample data.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-005</code></td>
+                        <td>Template Library</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Searchable, filterable library of all templates. Filter by category, status (active/draft/archived), and date. Show usage count (how many campaigns use each template).</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-006</code></td>
+                        <td>Template Duplication</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>Clone an existing template (including all field placements and data mappings) to create a variant. Useful for regional or role-specific adaptations.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-007</code></td>
+                        <td>Template Status Management</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Templates have states: <strong>Draft</strong> (being configured), <strong>Active</strong> (available for campaigns), <strong>Archived</strong> (no longer available for new campaigns but existing campaigns unaffected).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>1.2 Document Categories</h3>
+            <table>
+                <thead>
+                    <tr><th>Category</th><th>Examples</th><th>Typical Fields</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Offer Letters</strong></td>
+                        <td>Employment offer, conditional offer</td>
+                        <td>Candidate name, position, salary, start date, location, manager, signature</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Employment Contracts</strong></td>
+                        <td>Full-time, part-time, contractor</td>
+                        <td>Candidate name, role, department, compensation, benefits, signature, date, initials</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NDAs</strong></td>
+                        <td>Non-disclosure, confidentiality</td>
+                        <td>Candidate name, company name, effective date, signature</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Company Policies</strong></td>
+                        <td>Code of conduct, handbook acknowledgment, IT policy</td>
+                        <td>Candidate name, checkbox (acknowledge), signature, date</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tax &amp; Compliance</strong></td>
+                        <td>W-4, state tax forms, I-9 Section 1</td>
+                        <td>Name, SSN (candidate-entered), address, filing status, signature</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Benefits Enrollment</strong></td>
+                        <td>Health insurance, 401k, direct deposit</td>
+                        <td>Name, selections (dropdown), dependents, account info, signature</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Custom</strong></td>
+                        <td>Client-specific documents</td>
+                        <td>Fully configurable</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== MODULE 2: FIELD PLACEMENT ===================== -->
+    <section id="field-placement">
+        <h2 class="section-title">Module 2: Field Placement &amp; Types</h2>
+        <p class="section-subtitle">Visual drag-and-drop field placement on document templates</p>
+
+        <div class="card">
+            <h3>2.1 Field Placement Interface</h3>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-010</code></td>
+                        <td>Visual Field Placement</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Drag-and-drop interface to place fields on the PDF document. The PDF is rendered page by page. Admin drags field types from a sidebar palette onto exact positions on the document. Fields snap to alignment guides.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-011</code></td>
+                        <td>Field Resize &amp; Position</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Each placed field can be resized by dragging handles, repositioned by dragging, and given exact x/y/width/height coordinates via a properties panel. Fields render at the defined position in the generated PDF.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-012</code></td>
+                        <td>Multi-Page Navigation</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Navigate between pages of a multi-page document. Page thumbnail sidebar for quick navigation. Each page displays its placed fields independently.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-013</code></td>
+                        <td>Field Properties Panel</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>When a field is selected, a properties panel shows: field type, label, required/optional toggle, data source (auto-fill from attribute or candidate input), placeholder text, validation rules, and display formatting.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-014</code></td>
+                        <td>Field Deletion &amp; Undo</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Delete placed fields. Undo/redo support (Ctrl+Z / Ctrl+Y) for field placement, movement, resize, and deletion.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-015</code></td>
+                        <td>Field Copy &amp; Paste</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>Copy a configured field (with all properties) and paste it to another location or page. Useful for repeating the same field (e.g., initials on every page).</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-016</code></td>
+                        <td>Field Ordering &amp; Tab Sequence</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Define the order in which the candidate fills in fields (tab order). By default, top-to-bottom, left-to-right per page. Admin can reorder via drag-and-drop in a field list panel.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>2.2 Supported Field Types</h3>
+            <table>
+                <thead>
+                    <tr><th>Field Type</th><th>Description</th><th>Validation Options</th><th>Priority</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Signature</strong></td>
+                        <td>Electronic signature capture. Candidate draws signature on screen (touch/mouse) or types name to generate a signature font. Renders as an image in the final PDF.</td>
+                        <td>Required by default. Cannot be auto-filled.</td>
+                        <td><span class="p0">P0</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Initials</strong></td>
+                        <td>Shortened signature (initials only). Same capture method as signature. Commonly placed on each page for acknowledgment.</td>
+                        <td>Required/optional. Cannot be auto-filled.</td>
+                        <td><span class="p0">P0</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Text</strong></td>
+                        <td>Single-line text input. For names, addresses, short answers.</td>
+                        <td>Max length, regex pattern, required/optional. Can restrict to: letters only, numbers only, email format, alphanumeric.</td>
+                        <td><span class="p0">P0</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Text Area</strong></td>
+                        <td>Multi-line text for longer content (e.g., special conditions, notes).</td>
+                        <td>Max length, required/optional.</td>
+                        <td><span class="p1">P1</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Number</strong></td>
+                        <td>Numeric input. For salary amounts, ID numbers, quantities.</td>
+                        <td>Min/max value, decimal places, format (currency, integer).</td>
+                        <td><span class="p0">P0</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date</strong></td>
+                        <td>Date picker input. For start dates, birth dates, effective dates.</td>
+                        <td>Date format (MM/DD/YYYY, DD/MM/YYYY, etc.), min/max date, auto-fill with signing date option.</td>
+                        <td><span class="p0">P0</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dropdown</strong></td>
+                        <td>Single-select from a predefined list. For departments, locations, benefit plans, tax filing status.</td>
+                        <td>Options list (label + value), default value, required/optional.</td>
+                        <td><span class="p0">P0</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Checkbox</strong></td>
+                        <td>Boolean toggle. For acknowledgments, opt-ins, policy acceptance.</td>
+                        <td>Checked by default option. Can be grouped (select all that apply).</td>
+                        <td><span class="p0">P0</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Radio Buttons</strong></td>
+                        <td>Single selection from a group of options displayed inline on the document.</td>
+                        <td>Option values, required/optional, default selected.</td>
+                        <td><span class="p1">P1</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Auto-Fill Date (Signing Date)</strong></td>
+                        <td>Automatically populated with the date and time the candidate signs. Cannot be edited by candidate.</td>
+                        <td>Date format configurable. Always required.</td>
+                        <td><span class="p0">P0</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Read-Only Text</strong></td>
+                        <td>Displays a value from Talkpush attributes or a static value. Candidate cannot edit. For pre-filled contract terms, company name, role title.</td>
+                        <td>Data source must be defined. Renders as text in the PDF.</td>
+                        <td><span class="p0">P0</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Attachment</strong></td>
+                        <td>Candidate can upload a file (e.g., additional ID, photo). Attached to the signing record. Not rendered in the document itself but stored alongside.</td>
+                        <td>Allowed file types, max size, required/optional.</td>
+                        <td><span class="p2">P2</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== MODULE 3: DATA MAPPING ===================== -->
+    <section id="data-mapping">
+        <h2 class="section-title">Module 3: Data Mapping &amp; Auto-Fill</h2>
+        <p class="section-subtitle">Connect document fields to Talkpush candidate attributes or candidate input</p>
+
+        <div class="card">
+            <h3>3.1 Data Source Configuration</h3>
+            <p>Every field placed on a template must have a <strong>data source</strong> defined. This determines whether the field is auto-filled from the candidate's Talkpush profile or left for the candidate to complete.</p>
+
+            <table style="margin-top:16px;">
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-020</code></td>
+                        <td>Auto-Fill from Talkpush Attributes</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>For any text, number, date, dropdown, or read-only field, the admin can select a <strong>Talkpush candidate attribute</strong> as the data source. When the signing session starts, TalkSign fetches the candidate's current attribute values and populates the fields automatically. Available attributes include all standard and custom fields in the candidate profile.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-021</code></td>
+                        <td>Candidate Input Fields</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Fields marked as "Candidate Input" are left blank for the candidate to fill in during the signing session. Signature and Initials fields are always candidate input. For all other field types, the admin chooses: auto-fill (attribute) or candidate input.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-022</code></td>
+                        <td>Attribute Picker UI</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>When "Auto-fill from attribute" is selected, a searchable dropdown shows all available Talkpush candidate attributes grouped by category (Personal, Contact, Employment, Custom, Campaign-specific). Shows attribute name, type, and sample value.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-023</code></td>
+                        <td>Auto-Fill with Editable Override</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Admin can configure auto-filled fields as either <strong>read-only</strong> (candidate cannot change) or <strong>editable</strong> (pre-filled but candidate can modify). Default: read-only for auto-filled fields.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-024</code></td>
+                        <td>Static Value Fields</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>A field can be set to a static (hardcoded) value that is the same for all candidates using this template (e.g., company name, company address, policy version number). Rendered as read-only text in the document.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-025</code></td>
+                        <td>Missing Attribute Handling</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>If an auto-fill attribute is empty or missing for a candidate: (1) If the field is <strong>required</strong>, the candidate is prompted to fill it in manually. (2) If <strong>optional</strong>, the field is left blank. (3) Admin can define a default/fallback value for missing attributes.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-026</code></td>
+                        <td>Attribute Writeback</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>When a candidate fills in or modifies a field during signing, the value can be written back to the candidate's Talkpush profile attribute. Admin configures this per field. Useful for collecting data like emergency contact or bank details that should persist in the candidate profile.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>3.2 Available Talkpush Attribute Categories</h3>
+            <div class="highlight info">
+                The attribute picker pulls from the full Talkpush candidate data model. Below are the most commonly used categories for document signing.
+            </div>
+            <table style="margin-top:12px;">
+                <thead>
+                    <tr><th>Category</th><th>Example Attributes</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Personal</strong></td>
+                        <td>Full name, first name, last name, date of birth, gender, nationality, marital status</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Contact</strong></td>
+                        <td>Email, phone number, address (street, city, state, zip, country)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Employment</strong></td>
+                        <td>Position title, department, location, manager name, start date, employment type, salary/hourly rate, work schedule</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Identification</strong></td>
+                        <td>Government ID number, SSN (masked), passport number, driver's license</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Campaign</strong></td>
+                        <td>Campaign name, application date, source channel, recruiter name</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Custom</strong></td>
+                        <td>Any custom attributes defined by the client in their Talkpush configuration</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Computed</strong></td>
+                        <td>Current date, current year, signing date, document expiration date</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== MODULE 4: SIGNING EXPERIENCE ===================== -->
+    <section id="signing-experience">
+        <h2 class="section-title">Module 4: Candidate Signing Experience</h2>
+        <p class="section-subtitle">Mobile-first, frictionless signing flow with Talkpush branding</p>
+
+        <div class="card">
+            <h3>4.1 Signing Flow Requirements</h3>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-030</code></td>
+                        <td>Mobile-First Responsive UI</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>The signing experience must be optimized for mobile devices first (WhatsApp is the primary delivery channel). Responsive layout that works on any screen size. Touch-friendly controls. No pinch-to-zoom required to interact with fields.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-031</code></td>
+                        <td>No Account Required</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Candidates must NOT need to create an account or log in to sign documents. The signing link itself is the access token. No friction &mdash; open link, review, fill, sign.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-032</code></td>
+                        <td>Guided Field-by-Field Flow</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>On mobile, instead of showing the full document with small fields, present a <strong>guided step-by-step flow</strong>: (1) show all auto-filled read-only fields for review, (2) present each candidate-input field one at a time in large, easy-to-use format, (3) signature/initials capture as the final step. A progress bar shows completion status. On desktop, the full document view is also available as an option.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-033</code></td>
+                        <td>Electronic Signature Capture</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Two signature methods: (1) <strong>Draw</strong> &mdash; finger/stylus on touch screen or mouse on desktop, rendered on a signature pad canvas. (2) <strong>Type</strong> &mdash; type name and select from 4 signature font styles. Both produce a signature image embedded in the final PDF. Candidate can redo before confirming.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-034</code></td>
+                        <td>E-Disclosure Consent</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Before signing, candidates must consent to electronic records and signatures (ESIGN Act / UETA compliance). Present a clear disclosure: "By proceeding, you agree to sign electronically. Your electronic signature has the same legal validity as a handwritten signature." Candidate must actively consent (checkbox + continue).</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-035</code></td>
+                        <td>Document Review Before Signing</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Candidates can view the complete document (all pages) with auto-filled data before signing. PDF viewer with zoom, scroll, page navigation. Auto-filled fields are visually highlighted. On mobile, option to download or view full PDF.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-036</code></td>
+                        <td>Multi-Document Signing Session</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>When a campaign requires multiple documents, the candidate signs them in a single session. A document list/stepper shows which documents are pending, in progress, and completed. Candidate progresses through each document sequentially. Session is complete when all documents are signed.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-037</code></td>
+                        <td>Save &amp; Resume Later</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>If a candidate partially completes the signing session (fills some fields but doesn't sign), their progress is saved. When they return to the same link, they resume where they left off. Partially completed fields are preserved.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-038</code></td>
+                        <td>Decline to Sign</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Candidate can decline to sign a document. Requires selecting a reason from a list (disagree with terms, need more time, want to speak with recruiter, other) and optional free-text comment. Declining updates the document status and notifies the recruiter.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-039</code></td>
+                        <td>Confirmation &amp; Download</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>After signing all documents, show a confirmation screen with: success message, list of signed documents, option to download a copy of each signed document (PDF), and a "You may close this window" message. Also send a confirmation to the candidate's email (if available) with signed PDFs attached.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-040</code></td>
+                        <td>Talkpush Branding</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>The signing UI uses Talkpush branding (or client white-label branding if configured). Logo, colors, and tone match the Talkpush onboarding experience. No third-party branding is shown.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-041</code></td>
+                        <td>Multi-Language Support</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>The signing UI (labels, instructions, buttons) supports multiple languages. Language is auto-detected from the candidate's profile or browser locale. Documents themselves remain in their uploaded language &mdash; the UI chrome is translated.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-042</code></td>
+                        <td>Identity Verification (Optional)</td>
+                        <td><span class="p2">P2</span></td>
+                        <td>For high-security documents, admin can require identity verification before signing: (1) SMS OTP sent to candidate's phone on file, (2) email verification link, or (3) knowledge-based question (date of birth or last 4 of SSN). Configurable per template.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>4.2 Signing Flow (Mobile)</h3>
+            <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:16px;">
+                <div class="flow-step">
+                    <div class="step-num">1</div>
+                    <h4>Open Link</h4>
+                    <p>Welcome screen + e-disclosure consent</p>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">2</div>
+                    <h4>Review</h4>
+                    <p>View pre-filled document; scroll all pages</p>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">3</div>
+                    <h4>Complete Fields</h4>
+                    <p>Guided step-by-step for each input field</p>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">4</div>
+                    <h4>Sign</h4>
+                    <p>Draw or type signature + initials</p>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">5</div>
+                    <h4>Confirm</h4>
+                    <p>Download copy, session complete</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== MODULE 5: SIGNING LINK ===================== -->
+    <section id="signing-link">
+        <h2 class="section-title">Module 5: Signing Link Generation</h2>
+        <p class="section-subtitle">Unique signing URLs stored as candidate attributes for omnichannel delivery</p>
+
+        <div class="card">
+            <h3>5.1 Link Generation Requirements</h3>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-050</code></td>
+                        <td>Unique Signing URL per Candidate</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>When a candidate reaches the signing stage in a campaign workflow, the system generates a unique, cryptographically secure URL. Format: <code>https://sign.talkpush.com/{token}</code> where token is a non-guessable, URL-safe string (e.g., UUID v4 or 32-char random base62). One URL covers all documents the candidate needs to sign for that campaign.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-051</code></td>
+                        <td>Store as Candidate Attribute</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>The generated signing URL is automatically stored as a candidate attribute (e.g., <code>signing_url</code>) in the candidate's Talkpush profile. This allows any Talkpush automation (WhatsApp message, SMS, email, chatbot response) to reference and send the link using the standard attribute merge syntax: <code>{{signing_url}}</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-052</code></td>
+                        <td>Signing Status Attribute</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>In addition to the URL, the following candidate attributes are maintained and updated in real-time:
+                            <ul style="margin-top:8px;">
+                                <li><code>signing_status</code> &mdash; overall status: <em>pending, in_progress, completed, declined, expired, voided</em></li>
+                                <li><code>signing_completed_at</code> &mdash; timestamp when all documents were signed</li>
+                                <li><code>signing_documents_total</code> &mdash; number of documents to sign</li>
+                                <li><code>signing_documents_completed</code> &mdash; number signed so far</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-053</code></td>
+                        <td>Link Expiration</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Signing links have a configurable expiration period (default: 7 days, configurable per campaign: 1-90 days). After expiration, the link shows a "This signing link has expired" message with instructions to contact the recruiter. Status updates to <em>expired</em>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-054</code></td>
+                        <td>Link Regeneration</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Recruiters can regenerate an expired or voided signing link from the candidate profile. The old link is invalidated and a new one is created. The <code>signing_url</code> attribute is updated. If the candidate had partial progress, admin chooses: keep progress or restart.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-055</code></td>
+                        <td>Link Voiding</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Recruiters can void (cancel) a signing link if the offer is rescinded or documents need to change. Voided links show a "This signing request has been cancelled" message. If the candidate was mid-signing, they cannot continue.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-056</code></td>
+                        <td>Automatic Generation via Workflow</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Signing links are automatically generated when a candidate reaches a specific workflow stage (configurable trigger). No manual action required. The workflow engine triggers TalkSign to create the signing session and populate the attribute.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlight">
+            <strong>Key design decision:</strong> By storing the signing link as a candidate attribute, Talkpush's existing messaging infrastructure handles delivery. The recruiter can send the link via WhatsApp template, SMS, email, chatbot &mdash; whatever channel the candidate is already on. No new sending infrastructure is needed in TalkSign.
+        </div>
+    </section>
+
+    <!-- ===================== MODULE 6: STATUS TRACKING & AUDIT ===================== -->
+    <section id="status-tracking">
+        <h2 class="section-title">Module 6: Status Tracking &amp; Audit Trail</h2>
+        <p class="section-subtitle">Real-time visibility and legally admissible audit records</p>
+
+        <div class="card">
+            <h3>6.1 Status Tracking</h3>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-060</code></td>
+                        <td>Real-Time Status Dashboard</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Campaign-level view showing all candidates and their signing status. Filterable by status (pending, viewed, in progress, completed, declined, expired). Sortable columns. Bulk actions (resend reminder, void).</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-061</code></td>
+                        <td>Per-Candidate Status</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>In the candidate profile, show detailed signing status per document: document name, status (pending / viewed / signed / declined), timestamp of last activity, and link to view the signed PDF (if complete).</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-062</code></td>
+                        <td>Document-Level Status States</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>
+                            Each document tracks these states:
+                            <ul style="margin-top:8px;">
+                                <li><strong>Pending</strong> &mdash; link generated, candidate hasn't opened it yet</li>
+                                <li><strong>Viewed</strong> &mdash; candidate opened the link and viewed the document</li>
+                                <li><strong>In Progress</strong> &mdash; candidate started filling in fields (partially completed)</li>
+                                <li><strong>Completed</strong> &mdash; candidate signed the document</li>
+                                <li><strong>Declined</strong> &mdash; candidate explicitly declined to sign</li>
+                                <li><strong>Expired</strong> &mdash; signing link expired before completion</li>
+                                <li><strong>Voided</strong> &mdash; recruiter cancelled the signing request</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>6.2 Audit Trail</h3>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-065</code></td>
+                        <td>Immutable Event Log</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Every action on a signing session is logged with immutable, append-only records:
+                            <ul style="margin-top:8px;">
+                                <li>Signing session created (who, when, which documents)</li>
+                                <li>Link sent / delivered (channel, timestamp)</li>
+                                <li>Link opened (timestamp, IP address, user agent, device type)</li>
+                                <li>E-disclosure consent given (timestamp, IP)</li>
+                                <li>Each document viewed (timestamp, IP)</li>
+                                <li>Each field filled / modified (field name, value, timestamp)</li>
+                                <li>Signature captured (method: draw/type, timestamp, IP)</li>
+                                <li>Document signed (timestamp, IP, device)</li>
+                                <li>Document declined (reason, timestamp)</li>
+                                <li>Session completed (timestamp)</li>
+                                <li>Signed PDF generated and stored</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-066</code></td>
+                        <td>Certificate of Completion</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>For each completed signing session, generate a <strong>Certificate of Completion</strong> PDF that includes: signer's name and email, list of documents signed, timestamp for each signature, IP address at time of signing, e-disclosure consent record, device and browser info, unique signing session ID, and a tamper-evident hash of the signed documents. This certificate is stored alongside the signed documents and is downloadable by recruiters.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-067</code></td>
+                        <td>Audit Log Viewer</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>In the admin UI, recruiters can view the full audit trail for any signing session. Timeline view showing every event chronologically. Exportable as CSV or PDF for compliance/legal needs.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== MODULE 7: REMINDERS & EXPIRATION ===================== -->
+    <section id="reminders">
+        <h2 class="section-title">Module 7: Reminders &amp; Expiration</h2>
+        <p class="section-subtitle">Automated follow-ups to maximize signing completion rates</p>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-070</code></td>
+                        <td>Configurable Reminder Schedule</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Per campaign, configure an automated reminder schedule for unsigned documents. Define: (1) first reminder (X days/hours after link generation), (2) repeat interval (every X days/hours), (3) maximum number of reminders. Default: first reminder at 24 hours, repeat every 2 days, max 3 reminders.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-071</code></td>
+                        <td>Reminder Delivery via Talkpush</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Reminders are sent through <strong>Talkpush's existing messaging automation</strong>, not by TalkSign directly. TalkSign updates the candidate's <code>signing_status</code> attribute and triggers a Talkpush workflow event (e.g., <code>signing_reminder_due</code>). The workflow sends the reminder message via the campaign's configured channel (WhatsApp, SMS, email), including the <code>{{signing_url}}</code> attribute.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-072</code></td>
+                        <td>Expiration Handling</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>When a link expires: status updates to <em>expired</em>, candidate sees expiration message if they try to access, a workflow event <code>signing_expired</code> fires (enabling custom automation &mdash; e.g., notify recruiter, send candidate a message, or auto-regenerate link).</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-073</code></td>
+                        <td>Pre-Expiration Warning</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>X hours/days before expiration, fire a <code>signing_expiring_soon</code> workflow event. Enables sending an urgent "Your documents expire in 24 hours" message to the candidate.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== MODULE 8: DOCUMENT STORAGE ===================== -->
+    <section id="storage">
+        <h2 class="section-title">Module 8: Document Storage &amp; Retrieval</h2>
+        <p class="section-subtitle">Secure storage of signed documents with easy access</p>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-080</code></td>
+                        <td>Signed PDF Generation</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Upon signing, generate the final PDF with all fields rendered (auto-filled values, candidate inputs, signatures, initials, dates). The signed PDF is a flattened, non-editable PDF. A tamper-evident hash (SHA-256) is computed and stored with the document.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-081</code></td>
+                        <td>Encrypted Storage</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>All signed documents are stored encrypted at rest (AES-256). Storage location: cloud object storage (AWS S3 or equivalent) with server-side encryption. Access requires authenticated API calls with proper authorization.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-082</code></td>
+                        <td>Retrieval from Candidate Profile</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Recruiters can view and download signed documents directly from the candidate profile in Talkpush. Each signed document shows: document name, signed date, and a download/preview button. Also available: the Certificate of Completion.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-083</code></td>
+                        <td>Bulk Download</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>Download all signed documents for a candidate as a ZIP archive (includes all signed PDFs + Certificate of Completion). Also available at campaign level: export all completed documents for all candidates.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-084</code></td>
+                        <td>Retention Policy</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>Configurable document retention period per organization. Default: indefinite. Options: 1 year, 3 years, 5 years, 7 years, indefinite. After retention period, documents are securely deleted. 30-day warning before deletion.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-085</code></td>
+                        <td>Candidate Copy Delivery</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>After signing, the candidate receives a copy of their signed documents. Delivery methods: (1) immediate download at end of signing session, (2) email with signed PDFs attached (if email is available), (3) signing link remains accessible (read-only, showing completed documents) for 30 days after signing.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== DATA MODEL ===================== -->
+    <section id="data-model">
+        <h2 class="section-title">Data Model</h2>
+        <p class="section-subtitle">Core database schema for TalkSign</p>
+
+        <div class="card">
+            <h3>Entity Relationship</h3>
+            <pre><code>-- ============================================
+-- TALKSIGN DATA MODEL
+-- ============================================
+
+-- Document Templates
+CREATE TABLE talksign_templates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    category VARCHAR(50) NOT NULL,
+        -- offer_letter, employment_contract, nda, policy,
+        -- tax_compliance, benefits, custom
+    status VARCHAR(20) NOT NULL DEFAULT 'draft',
+        -- draft, active, archived
+    version INTEGER NOT NULL DEFAULT 1,
+    parent_template_id UUID REFERENCES talksign_templates(id),
+    source_pdf_url TEXT NOT NULL,
+    source_pdf_hash VARCHAR(64) NOT NULL, -- SHA-256
+    page_count INTEGER NOT NULL,
+    created_by UUID NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Template Fields (placed on the PDF)
+CREATE TABLE talksign_template_fields (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    template_id UUID NOT NULL REFERENCES talksign_templates(id) ON DELETE CASCADE,
+    field_type VARCHAR(30) NOT NULL,
+        -- signature, initials, text, text_area, number,
+        -- date, dropdown, checkbox, radio,
+        -- auto_date, read_only, attachment
+    label VARCHAR(255) NOT NULL,
+    page_number INTEGER NOT NULL,
+    position_x DECIMAL(10,4) NOT NULL, -- % from left
+    position_y DECIMAL(10,4) NOT NULL, -- % from top
+    width DECIMAL(10,4) NOT NULL,      -- % of page width
+    height DECIMAL(10,4) NOT NULL,     -- % of page height
+    tab_order INTEGER NOT NULL,
+    is_required BOOLEAN NOT NULL DEFAULT true,
+
+    -- Data source
+    data_source VARCHAR(20) NOT NULL DEFAULT 'candidate_input',
+        -- candidate_input, talkpush_attribute, static_value,
+        -- computed (signing_date, etc.)
+    talkpush_attribute_key VARCHAR(255), -- if data_source = talkpush_attribute
+    static_value TEXT,                   -- if data_source = static_value
+    computed_type VARCHAR(50),           -- if data_source = computed
+    is_editable_when_autofilled BOOLEAN DEFAULT false,
+    fallback_value TEXT,                 -- if attribute is missing
+    writeback_attribute_key VARCHAR(255), -- write candidate input back to profile
+
+    -- Validation
+    validation_rules JSONB,
+        -- { "max_length": 100, "pattern": "^[A-Za-z]+$",
+        --   "min_value": 0, "max_value": 999999,
+        --   "date_format": "MM/DD/YYYY",
+        --   "allowed_types": ["pdf","jpg"], "max_file_size_mb": 10 }
+
+    -- Dropdown/Radio options
+    options JSONB,
+        -- [{"label": "Full-Time", "value": "full_time"}, ...]
+    default_value TEXT,
+
+    -- Display
+    placeholder_text VARCHAR(255),
+    font_size INTEGER DEFAULT 12,
+
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Campaign Signing Configuration
+CREATE TABLE talksign_campaign_configs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    campaign_id UUID NOT NULL, -- Talkpush campaign ID
+    organization_id UUID NOT NULL,
+    is_active BOOLEAN DEFAULT true,
+
+    -- Documents to sign (ordered)
+    documents JSONB NOT NULL,
+        -- [{"template_id": "...", "order": 1}, ...]
+
+    -- Link settings
+    link_expiration_days INTEGER NOT NULL DEFAULT 7,
+
+    -- Reminder settings
+    reminder_enabled BOOLEAN DEFAULT true,
+    reminder_first_after_hours INTEGER DEFAULT 24,
+    reminder_repeat_every_hours INTEGER DEFAULT 48,
+    reminder_max_count INTEGER DEFAULT 3,
+
+    -- Identity verification
+    identity_verification_enabled BOOLEAN DEFAULT false,
+    identity_verification_method VARCHAR(20), -- sms_otp, email, knowledge_based
+
+    -- Branding
+    custom_logo_url TEXT,
+    custom_primary_color VARCHAR(7), -- hex
+
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Signing Sessions (one per candidate per campaign)
+CREATE TABLE talksign_signing_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    candidate_id UUID NOT NULL,
+    campaign_id UUID NOT NULL,
+    config_id UUID NOT NULL REFERENCES talksign_campaign_configs(id),
+    organization_id UUID NOT NULL,
+
+    -- Link
+    token VARCHAR(64) NOT NULL UNIQUE, -- URL token
+    signing_url TEXT NOT NULL,
+
+    -- Status
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        -- pending, viewed, in_progress, completed,
+        -- declined, expired, voided
+
+    -- Timestamps
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    first_viewed_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ,
+    expires_at TIMESTAMPTZ NOT NULL,
+    voided_at TIMESTAMPTZ,
+    voided_by UUID,
+    voided_reason TEXT,
+
+    -- Counts
+    documents_total INTEGER NOT NULL,
+    documents_completed INTEGER NOT NULL DEFAULT 0,
+
+    -- Consent
+    edisclosure_consented_at TIMESTAMPTZ,
+    edisclosure_consent_ip INET,
+
+    -- Identity verification
+    identity_verified_at TIMESTAMPTZ,
+    identity_verification_method VARCHAR(20),
+
+    -- Reminders
+    reminders_sent INTEGER DEFAULT 0,
+    last_reminder_sent_at TIMESTAMPTZ
+);
+
+-- Signing Documents (one per document in session)
+CREATE TABLE talksign_signing_documents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_id UUID NOT NULL REFERENCES talksign_signing_sessions(id),
+    template_id UUID NOT NULL REFERENCES talksign_templates(id),
+    document_order INTEGER NOT NULL,
+
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        -- pending, viewed, in_progress, completed, declined
+
+    -- Filled field values
+    field_values JSONB NOT NULL DEFAULT '{}',
+        -- { "field_id": {"value": "John", "filled_at": "...",
+        --                "source": "auto_fill|candidate"} }
+
+    -- Signature data
+    signature_data JSONB,
+        -- { "method": "draw|type", "image_url": "...",
+        --   "typed_name": "John Doe", "font": "signature-1" }
+    initials_data JSONB,
+
+    -- Signed PDF
+    signed_pdf_url TEXT,
+    signed_pdf_hash VARCHAR(64), -- SHA-256 tamper detection
+    certificate_pdf_url TEXT,
+
+    -- Decline info
+    declined_at TIMESTAMPTZ,
+    decline_reason VARCHAR(100),
+    decline_comment TEXT,
+
+    -- Timestamps
+    first_viewed_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ,
+
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Audit Trail (immutable, append-only)
+CREATE TABLE talksign_audit_log (
+    id BIGSERIAL PRIMARY KEY,
+    session_id UUID NOT NULL REFERENCES talksign_signing_sessions(id),
+    document_id UUID REFERENCES talksign_signing_documents(id),
+
+    event_type VARCHAR(50) NOT NULL,
+        -- session_created, link_opened, edisclosure_consented,
+        -- document_viewed, field_filled, field_modified,
+        -- signature_captured, initials_captured,
+        -- document_signed, document_declined,
+        -- session_completed, pdf_generated,
+        -- reminder_triggered, link_expired, link_voided,
+        -- link_regenerated, identity_verified
+
+    event_data JSONB, -- event-specific payload
+
+    -- Context
+    ip_address INET,
+    user_agent TEXT,
+    device_type VARCHAR(20), -- mobile, tablet, desktop
+
+    -- Actor
+    actor_type VARCHAR(20) NOT NULL, -- candidate, recruiter, system
+    actor_id UUID,
+
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes
+CREATE INDEX idx_templates_org ON talksign_templates(organization_id);
+CREATE INDEX idx_templates_status ON talksign_templates(status);
+CREATE INDEX idx_campaign_configs_campaign ON talksign_campaign_configs(campaign_id);
+CREATE INDEX idx_sessions_candidate ON talksign_signing_sessions(candidate_id);
+CREATE INDEX idx_sessions_campaign ON talksign_signing_sessions(campaign_id);
+CREATE INDEX idx_sessions_token ON talksign_signing_sessions(token);
+CREATE INDEX idx_sessions_status ON talksign_signing_sessions(status);
+CREATE INDEX idx_sessions_expires ON talksign_signing_sessions(expires_at);
+CREATE INDEX idx_documents_session ON talksign_signing_documents(session_id);
+CREATE INDEX idx_documents_status ON talksign_signing_documents(status);
+CREATE INDEX idx_audit_session ON talksign_audit_log(session_id);
+CREATE INDEX idx_audit_event ON talksign_audit_log(event_type);
+CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
+        </div>
+    </section>
+
+    <!-- ===================== API DESIGN ===================== -->
+    <section id="api">
+        <h2 class="section-title">API Design</h2>
+        <p class="section-subtitle">RESTful API endpoints for TalkSign</p>
+
+        <div class="card">
+            <h3>Admin API (Internal &mdash; Talkpush Platform)</h3>
+            <table>
+                <thead>
+                    <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/templates</code></td><td>Upload and create a new template</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/templates</code></td><td>List templates (filterable)</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/templates/{id}</code></td><td>Get template details + fields</td></tr>
+                    <tr><td><code>PUT</code></td><td><code>/api/talksign/templates/{id}</code></td><td>Update template metadata</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/templates/{id}/fields</code></td><td>Add/update fields on template</td></tr>
+                    <tr><td><code>DELETE</code></td><td><code>/api/talksign/templates/{id}/fields/{fieldId}</code></td><td>Remove a field</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/templates/{id}/publish</code></td><td>Set template to Active</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/templates/{id}/archive</code></td><td>Archive template</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/templates/{id}/duplicate</code></td><td>Clone template</td></tr>
+                    <tr><td colspan="3" style="background:#F5F7FA; font-weight:600;">Campaign Configuration</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/campaigns/{campaignId}/config</code></td><td>Create signing config for campaign</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/campaigns/{campaignId}/config</code></td><td>Get campaign signing config</td></tr>
+                    <tr><td><code>PUT</code></td><td><code>/api/talksign/campaigns/{campaignId}/config</code></td><td>Update campaign signing config</td></tr>
+                    <tr><td colspan="3" style="background:#F5F7FA; font-weight:600;">Signing Sessions</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/sessions</code></td><td>Create signing session for candidate (generates link)</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/sessions/{id}</code></td><td>Get session status and details</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/sessions/{id}/void</code></td><td>Void a signing session</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/sessions/{id}/regenerate</code></td><td>Regenerate expired/voided link</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/sessions/{id}/audit</code></td><td>Get audit trail for session</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/sessions/{id}/documents/{docId}/pdf</code></td><td>Download signed PDF</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/sessions/{id}/certificate</code></td><td>Download Certificate of Completion</td></tr>
+                    <tr><td colspan="3" style="background:#F5F7FA; font-weight:600;">Dashboard</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/campaigns/{campaignId}/status</code></td><td>Campaign signing dashboard data</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>Candidate Signing API (Public &mdash; Token-Authenticated)</h3>
+            <table>
+                <thead>
+                    <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>GET</code></td><td><code>/sign/{token}</code></td><td>Load signing session (returns documents, auto-filled fields, status)</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/sign/{token}/consent</code></td><td>Record e-disclosure consent</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/sign/{token}/verify</code></td><td>Submit identity verification (if required)</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/sign/{token}/documents/{docId}/pdf</code></td><td>Get document PDF for preview</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/sign/{token}/documents/{docId}/fields</code></td><td>Save field values (partial save)</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/sign/{token}/documents/{docId}/sign</code></td><td>Submit signature and complete document</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/sign/{token}/documents/{docId}/decline</code></td><td>Decline to sign document</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/sign/{token}/documents/{docId}/signed-pdf</code></td><td>Download signed PDF (after completion)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>Talkpush Workflow Events (Outbound)</h3>
+            <p>TalkSign fires the following events into the Talkpush workflow engine, enabling automation:</p>
+            <table style="margin-top:12px;">
+                <thead>
+                    <tr><th>Event</th><th>Trigger</th><th>Payload</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>signing_session_created</code></td><td>New signing link generated</td><td>candidate_id, signing_url, documents list, expires_at</td></tr>
+                    <tr><td><code>signing_link_opened</code></td><td>Candidate opens the link</td><td>candidate_id, session_id, timestamp</td></tr>
+                    <tr><td><code>signing_document_signed</code></td><td>Candidate signs one document</td><td>candidate_id, document_name, completed_count, total_count</td></tr>
+                    <tr><td><code>signing_session_completed</code></td><td>All documents signed</td><td>candidate_id, session_id, completed_at, signed_pdf_urls</td></tr>
+                    <tr><td><code>signing_document_declined</code></td><td>Candidate declines a document</td><td>candidate_id, document_name, reason, comment</td></tr>
+                    <tr><td><code>signing_reminder_due</code></td><td>Scheduled reminder is due</td><td>candidate_id, reminder_number, signing_url</td></tr>
+                    <tr><td><code>signing_expiring_soon</code></td><td>X hours before expiration</td><td>candidate_id, expires_at, signing_url</td></tr>
+                    <tr><td><code>signing_expired</code></td><td>Link expired without completion</td><td>candidate_id, expired_at, documents_completed, documents_total</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== SECURITY & COMPLIANCE ===================== -->
+    <section id="security">
+        <h2 class="section-title">Security &amp; Compliance</h2>
+        <p class="section-subtitle">Legal validity and data protection</p>
+
+        <div class="card">
+            <h3>Legal Compliance</h3>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-090</code></td>
+                        <td>ESIGN Act &amp; UETA Compliance</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Electronic signatures must satisfy the U.S. ESIGN Act and Uniform Electronic Transactions Act requirements: (1) intent to sign, (2) consent to do business electronically, (3) association of signature with the record, (4) record retention. The e-disclosure consent + audit trail + signed PDF achieve this.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-091</code></td>
+                        <td>Tamper-Evident Documents</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Each signed PDF has a SHA-256 hash stored in the database. Any modification to the PDF after signing can be detected by comparing the hash. The Certificate of Completion includes this hash.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-092</code></td>
+                        <td>Data Encryption</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>All documents encrypted at rest (AES-256). All API communication over TLS 1.3. Signing tokens are cryptographically random and non-guessable.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-093</code></td>
+                        <td>Access Control</td>
+                        <td><span class="p0">P0</span></td>
+                        <td>Role-based access: only authorized recruiters/admins within the organization can view signed documents, audit trails, and manage templates. Candidates can only access their own signing session via their unique token.</td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-094</code></td>
+                        <td>GDPR / Data Privacy</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>Support data subject requests: ability to export all signing data for a candidate, delete signing records upon request (with legal hold exceptions). Consent is recorded for electronic communication.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== TALKPUSH INTEGRATION ===================== -->
+    <section id="integration">
+        <h2 class="section-title">Talkpush Platform Integration</h2>
+        <p class="section-subtitle">How TalkSign fits into the Talkpush ecosystem</p>
+
+        <div class="card">
+            <h3>Integration Points</h3>
+            <table>
+                <thead>
+                    <tr><th>Integration</th><th>Direction</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Candidate Attributes</strong></td>
+                        <td>Read &amp; Write</td>
+                        <td><strong>Read:</strong> Auto-fill fields from candidate profile attributes. <strong>Write:</strong> Store <code>signing_url</code>, <code>signing_status</code>, <code>signing_completed_at</code>, and other status attributes. Optionally write back candidate-entered values to profile.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Campaign Configuration</strong></td>
+                        <td>Read</td>
+                        <td>TalkSign reads campaign settings to determine which documents to include, link expiration, reminder schedule, and branding.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Workflow Engine</strong></td>
+                        <td>Bidirectional</td>
+                        <td><strong>Inbound:</strong> Workflow triggers signing session creation (e.g., when candidate reaches "Offer Accepted" stage). <strong>Outbound:</strong> TalkSign fires events (<code>signing_session_completed</code>, <code>signing_expired</code>, etc.) that the workflow engine can act on (advance stage, send notification, etc.).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Messaging Channels</strong></td>
+                        <td>Indirect (via attributes)</td>
+                        <td>TalkSign does NOT send messages directly. The signing URL is stored as an attribute, and Talkpush's messaging (WhatsApp, SMS, email, chatbot) references it: <code>"Please sign your documents here: {{signing_url}}"</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Candidate Profile UI</strong></td>
+                        <td>Read</td>
+                        <td>The candidate profile in the Talkpush recruiter dashboard shows a "Documents" section displaying TalkSign status, signed documents, and download links.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>HRIS Export</strong></td>
+                        <td>Outbound</td>
+                        <td>When signing is complete, signed PDFs can be included in HRIS data exports (Workday, SAP SuccessFactors) as part of the employee file creation.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== USER STORIES ===================== -->
+    <section id="user-stories">
+        <h2 class="section-title">Key User Stories</h2>
+        <p class="section-subtitle">Core user stories with acceptance criteria</p>
+
+        <div class="card">
+            <h3>Recruiter / Admin Stories</h3>
+
+            <div class="user-story">
+                <p><strong>US-01:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> upload a PDF and place signature and input fields visually on the document, <span class="so">so that</span> I can create reusable signing templates without technical skills.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Can upload PDF up to 25 MB, multi-page supported</li>
+                <li>Drag-and-drop field palette with all supported field types</li>
+                <li>Fields can be repositioned, resized, and configured via properties panel</li>
+                <li>Preview mode shows how the document will appear to candidates</li>
+                <li>Template can be saved as draft and published when ready</li>
+            </ul>
+
+            <div class="user-story" style="margin-top:24px;">
+                <p><strong>US-02:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> map document fields to Talkpush candidate attributes, <span class="so">so that</span> documents are auto-filled with candidate information and I don't need to enter data manually.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Each field has a data source selector: "Auto-fill from attribute" or "Candidate fills in"</li>
+                <li>Attribute picker shows all candidate attributes grouped by category</li>
+                <li>Auto-filled fields can be set as read-only or editable by candidate</li>
+                <li>Missing attributes show a fallback value or prompt candidate to fill in</li>
+            </ul>
+
+            <div class="user-story" style="margin-top:24px;">
+                <p><strong>US-03:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> select which documents a candidate must sign for a specific campaign, <span class="so">so that</span> different roles/locations get the appropriate document set.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Campaign configuration screen lists all active templates</li>
+                <li>Recruiter selects and orders the documents for the campaign</li>
+                <li>Can configure link expiration, reminder schedule per campaign</li>
+                <li>Changes to campaign config apply to new signing sessions only (existing sessions unchanged)</li>
+            </ul>
+
+            <div class="user-story" style="margin-top:24px;">
+                <p><strong>US-04:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> see a dashboard of all candidates' signing status for my campaign, <span class="so">so that</span> I can follow up on incomplete signatures and track onboarding progress.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Campaign dashboard shows all candidates with signing status (pending, viewed, in progress, completed, declined, expired)</li>
+                <li>Filterable and sortable by status, date, candidate name</li>
+                <li>Click on candidate to see per-document detail and audit trail</li>
+                <li>Bulk actions: resend reminder, void, regenerate link</li>
+            </ul>
+
+            <div class="user-story" style="margin-top:24px;">
+                <p><strong>US-05:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> download signed documents and the certificate of completion from the candidate's profile, <span class="so">so that</span> I can store them in the employee file or share with HR/legal.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Candidate profile shows "Signed Documents" section with download buttons</li>
+                <li>Can download individual signed PDFs or a ZIP of all documents + certificate</li>
+                <li>Certificate of Completion includes signer info, timestamps, IP addresses, tamper-evident hash</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>Candidate Stories</h3>
+
+            <div class="user-story">
+                <p><strong>US-06:</strong> <span class="as">As a</span> candidate, <span class="want">I want to</span> open a signing link on my phone, see my information pre-filled, complete any remaining fields, and sign &mdash; all in under 60 seconds, <span class="so">so that</span> I can complete my onboarding quickly without frustration.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Link opens directly in mobile browser (no app install, no account creation)</li>
+                <li>Welcome screen with e-disclosure consent (one tap)</li>
+                <li>Auto-filled fields are clearly shown as pre-populated</li>
+                <li>Candidate-input fields presented in guided step-by-step flow on mobile</li>
+                <li>Signature capture is large and touch-friendly (draw or type)</li>
+                <li>Confirmation screen with download option</li>
+            </ul>
+
+            <div class="user-story" style="margin-top:24px;">
+                <p><strong>US-07:</strong> <span class="as">As a</span> candidate, <span class="want">I want to</span> receive a copy of my signed documents, <span class="so">so that</span> I have my own records of what I signed.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Download available immediately after signing</li>
+                <li>Email with signed PDFs sent if email is on file</li>
+                <li>Signing link remains accessible (read-only) for 30 days showing completed documents</li>
+            </ul>
+
+            <div class="user-story" style="margin-top:24px;">
+                <p><strong>US-08:</strong> <span class="as">As a</span> candidate, <span class="want">I want to</span> decline to sign a document and provide a reason, <span class="so">so that</span> I can communicate concerns without abandoning the process entirely.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Visible "Decline" option on each document (not hidden)</li>
+                <li>Reason selection required (predefined options + free text)</li>
+                <li>Declining one document does not prevent signing others</li>
+                <li>Recruiter is notified immediately when a document is declined</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===================== UI DESIGN ===================== -->
+    <section id="ui-design">
+        <h2 class="section-title">UI Design</h2>
+        <p class="section-subtitle">Key interface patterns following the Talkpush Visual Language</p>
+
+        <div class="card">
+            <h3>Admin: Template Builder</h3>
+            <div class="wireframe">
+                <div class="wireframe-header">Layout Specification</div>
+                <p><strong>Structure:</strong> Talkpush standard left sidebar + main content area</p>
+                <ul style="margin-top:12px;">
+                    <li><strong>Left Panel (240px):</strong> Field palette with draggable field types (signature, initials, text, number, date, dropdown, checkbox, radio). Grouped by "Input Fields", "Signature Fields", "Display Fields". Below: field list showing all placed fields in tab order (reorderable by drag).</li>
+                    <li><strong>Center (flexible):</strong> PDF document viewer at actual aspect ratio. Pages rendered with page numbers. Placed fields shown as colored overlays (green border for auto-filled, blue border for candidate input, orange border for signature/initials). Click a field to select it.</li>
+                    <li><strong>Right Panel (300px):</strong> Properties panel for selected field. Shows: field type (read-only), label, required toggle, data source selector, attribute picker (if auto-fill), validation options, display options. Primary CTA: Talkpush Green "Save Template" button in top-right header.</li>
+                    <li><strong>Top Bar:</strong> Template name (editable), status badge (Draft/Active), page navigation (< Page 1 of 5 >), zoom controls, "Preview" button, "Save" (green) and "Publish" buttons.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Admin: Campaign Signing Configuration</h3>
+            <div class="wireframe">
+                <div class="wireframe-header">Layout Specification</div>
+                <p><strong>Structure:</strong> Settings page within campaign configuration, under a "Document Signing" tab</p>
+                <ul style="margin-top:12px;">
+                    <li><strong>Documents Section:</strong> Drag-and-drop ordered list of selected templates. Each row shows: drag handle, document name, category badge, field count, "Preview" and "Remove" actions. "Add Document" button (Talkpush Green) opens template picker modal.</li>
+                    <li><strong>Settings Section:</strong> Link expiration (dropdown: 1-90 days), reminder toggle with configuration (first after X hours, repeat every X hours, max count), identity verification toggle with method selector.</li>
+                    <li><strong>Branding Section:</strong> Logo upload, primary color picker (defaults to Talkpush Green).</li>
+                    <li><strong>Primary CTA:</strong> "Save Configuration" (Talkpush Green) at bottom.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Admin: Signing Status Dashboard</h3>
+            <div class="wireframe">
+                <div class="wireframe-header">Layout Specification</div>
+                <p><strong>Structure:</strong> Data table with filters, following the Talkpush table pattern</p>
+                <ul style="margin-top:12px;">
+                    <li><strong>Summary Bar:</strong> Status counts as pill badges &mdash; Completed (green), In Progress (blue), Pending (gray), Declined (red), Expired (orange). Click to filter.</li>
+                    <li><strong>Table Columns:</strong> Candidate Name, Status (color-coded badge), Documents (3/5 format with progress bar), Link Sent (date), Last Activity (date), Actions (three-dot menu: view, resend, void, regenerate).</li>
+                    <li><strong>Filters:</strong> Status dropdown, date range picker, search by candidate name.</li>
+                    <li><strong>Bulk Actions:</strong> Checkbox column, "Send Reminder" and "Void Selected" buttons appear when items are selected.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Candidate: Mobile Signing Experience</h3>
+            <div class="wireframe">
+                <div class="wireframe-header">Layout Specification</div>
+                <p><strong>Structure:</strong> Full-screen mobile-optimized flow. No navigation chrome &mdash; focused on the task.</p>
+                <ul style="margin-top:12px;">
+                    <li><strong>Screen 1 &mdash; Welcome:</strong> Company logo (or Talkpush if no white-label), "Hi {first_name}, please review and sign your documents", document list with names and count, e-disclosure consent checkbox, "Get Started" CTA (Talkpush Green, full-width).</li>
+                    <li><strong>Screen 2 &mdash; Document Review:</strong> Document name at top, scrollable PDF preview (or summary of auto-filled values in a card layout for faster mobile experience), "Continue to Sign" button at bottom (Talkpush Green, sticky).</li>
+                    <li><strong>Screen 3 &mdash; Field Input:</strong> One field per screen (large, easy to tap). Field label, helper text, large input. Progress bar at top (e.g., "3 of 7 fields"). "Next" button (Talkpush Green). "Back" link. For dropdowns: full-screen picker. For dates: native date picker.</li>
+                    <li><strong>Screen 4 &mdash; Signature:</strong> Large signature pad (90% of screen width). "Draw your signature" with clear/redo option. Or tab to "Type" for typed signature with font selection. "Confirm Signature" (Talkpush Green).</li>
+                    <li><strong>Screen 5 &mdash; Confirmation:</strong> Green checkmark, "All documents signed!", list of signed documents with download buttons, "You may now close this window" message. Talkpush branding.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== PHASED ROLLOUT ===================== -->
+    <section id="phases">
+        <h2 class="section-title">Phased Rollout</h2>
+        <p class="section-subtitle">Implementation phases from MVP to full feature set</p>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr><th>Phase</th><th>Scope</th><th>Requirements</th><th>Timeline</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Phase 1: MVP</strong></td>
+                        <td>Core signing flow</td>
+                        <td>
+                            <ul>
+                                <li>Template upload (PDF) + visual field placement</li>
+                                <li>Field types: Signature, Text, Number, Date, Dropdown, Checkbox, Read-Only, Auto-Date</li>
+                                <li>Auto-fill from Talkpush attributes + candidate input</li>
+                                <li>Campaign document selection</li>
+                                <li>Signing link generation + candidate attribute storage</li>
+                                <li>Mobile-first signing UI with guided flow</li>
+                                <li>E-disclosure consent</li>
+                                <li>Signed PDF generation + storage</li>
+                                <li>Basic audit trail</li>
+                                <li>Status tracking (session + document level)</li>
+                                <li>Workflow events (session_created, completed, declined, expired)</li>
+                                <li>Candidate download of signed documents</li>
+                            </ul>
+                        </td>
+                        <td>8&ndash;10 weeks</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phase 2: Complete</strong></td>
+                        <td>Full feature parity + enhancements</td>
+                        <td>
+                            <ul>
+                                <li>Initials field type, Text Area, Radio Buttons</li>
+                                <li>Certificate of Completion PDF</li>
+                                <li>Reminder automation (configurable schedule)</li>
+                                <li>Link expiration + regeneration</li>
+                                <li>Save &amp; resume (partial signing)</li>
+                                <li>Template versioning + duplication</li>
+                                <li>Attribute writeback</li>
+                                <li>Signing status dashboard with bulk actions</li>
+                                <li>Audit log viewer (admin)</li>
+                                <li>Multi-language UI</li>
+                                <li>Bulk download (ZIP)</li>
+                                <li>Candidate email copy of signed docs</li>
+                            </ul>
+                        </td>
+                        <td>6&ndash;8 weeks</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phase 3: Enterprise</strong></td>
+                        <td>Advanced &amp; compliance</td>
+                        <td>
+                            <ul>
+                                <li>Identity verification (SMS OTP, email, knowledge-based)</li>
+                                <li>Attachment field type</li>
+                                <li>White-label branding per client</li>
+                                <li>Retention policies</li>
+                                <li>GDPR data export/deletion</li>
+                                <li>HRIS export integration (signed PDFs to Workday/SAP)</li>
+                                <li>Advanced analytics (signing time, drop-off analysis)</li>
+                            </ul>
+                        </td>
+                        <td>4&ndash;6 weeks</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ===================== RISKS & MITIGATIONS ===================== -->
+    <section id="risks">
+        <h2 class="section-title">Risks &amp; Mitigations</h2>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr><th>Risk</th><th>Impact</th><th>Likelihood</th><th>Mitigation</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Legal validity of signatures questioned</strong></td>
+                        <td>High</td>
+                        <td>Low</td>
+                        <td>Follow ESIGN/UETA requirements precisely: consent, audit trail, tamper-evident storage. Have legal team review the Certificate of Completion format. Consider optional digital certificate (PKI) in Phase 3.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PDF rendering fidelity across devices</strong></td>
+                        <td>Medium</td>
+                        <td>Medium</td>
+                        <td>Use a proven server-side PDF rendering library (e.g., pdf-lib, PDFKit, or commercial like PSPDFKit). Test across major mobile browsers. Provide "View Full PDF" fallback.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Field placement accuracy on generated PDFs</strong></td>
+                        <td>High</td>
+                        <td>Medium</td>
+                        <td>Use percentage-based coordinates (not pixel) for field positions. Extensive QA with various PDF templates. Provide admin preview of generated document with sample data before publishing.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Signing link security (token guessing)</strong></td>
+                        <td>High</td>
+                        <td>Very Low</td>
+                        <td>Use 256-bit cryptographically random tokens. Rate-limit invalid token attempts. Links expire. Optional identity verification for sensitive documents.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Migration from DocuSign for existing clients</strong></td>
+                        <td>Medium</td>
+                        <td>High</td>
+                        <td>Run TalkSign in parallel with DocuSign initially. Provide migration tooling to recreate templates. Keep DocuSign integration as fallback for clients not ready to switch. Phase out gradually.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mobile signing UX on low-end devices</strong></td>
+                        <td>Medium</td>
+                        <td>Medium</td>
+                        <td>Optimize for low bandwidth: lazy-load PDF pages, compress images. Test on entry-level Android devices. Guided field-by-field flow avoids rendering full PDF on mobile.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <div style="text-align:center; padding:40px 0; color:var(--text-muted); font-size:12px; border-top:1px solid var(--border-light); margin-top:40px;">
+        <p>Talk<span style="color:var(--talkpush-green); font-weight:600;">Sign</span> &mdash; Product Requirements Document v1.0</p>
+        <p style="margin-top:4px;">Talkpush &copy; 2026 &mdash; Confidential</p>
+    </div>
+
+</div>
+
+</body>
+</html>
