@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TalkSign PRD - Native Document Signing for Talkpush Onboarding</title>
+    <title>Talkpush-Sign PRD - Native Document Signing for Talkpush Onboarding</title>
     <style>
         :root {
             --talkpush-green: #00E676;
@@ -378,7 +378,7 @@
 <!-- Navigation -->
 <nav class="nav">
     <div class="nav-logo">
-        <h2>Talk<span class="green">Sign</span></h2>
+        <h2>Talkpush-<span class="green">Sign</span></h2>
         <p>Product Requirements</p>
     </div>
 
@@ -395,14 +395,15 @@
     <a href="#signing-experience">Signing Experience</a>
     <a href="#signing-link">Signing Link Generation</a>
     <a href="#status-tracking">Status Tracking &amp; Audit</a>
-    <a href="#reminders">Reminders &amp; Expiration</a>
+    <a href="#long-waiter">Long-Waiter Monitoring</a>
     <a href="#storage">Document Storage</a>
 
     <div class="nav-section">Technical</div>
     <a href="#data-model">Data Model</a>
     <a href="#api">API Design</a>
     <a href="#security">Security &amp; Compliance</a>
-    <a href="#integration">Talkpush Integration</a>
+    <a href="#integration">Talkpush Integration Architecture</a>
+    <a href="#settings">System-Wide Settings</a>
 
     <div class="nav-section">Delivery</div>
     <a href="#user-stories">User Stories</a>
@@ -417,7 +418,7 @@
     <!-- Header -->
     <div class="header" id="overview">
         <span class="badge">PRD &mdash; P0 Critical</span>
-        <h1>Talk<span class="green">Sign</span></h1>
+        <h1>Talkpush-<span class="green">Sign</span></h1>
         <p class="subtitle">Native document signing built into Talkpush Onboarding &mdash; replacing DocuSign with a purpose-built, high-volume hiring solution that is faster, cheaper, and fully integrated.</p>
         <div class="header-meta">
             <div>Product<strong>Onboarding</strong></div>
@@ -431,10 +432,14 @@
     <section>
         <h2 class="section-title">Executive Summary</h2>
         <div class="card">
-            <p>TalkSign is Talkpush's native document signing solution designed to replace DocuSign within the onboarding workflow. Rather than replicating DocuSign's full feature set, TalkSign focuses exclusively on the high-volume hiring use case: recruiters configure document templates for a campaign, candidates receive a unique signing link, auto-filled fields populate from their Talkpush profile, and remaining fields are completed and signed by the candidate on any device.</p>
+            <p>Talkpush-Sign is Talkpush's native document signing solution designed to replace DocuSign within the onboarding workflow. Rather than replicating DocuSign's full feature set, Talkpush-Sign focuses exclusively on the high-volume hiring use case: recruiters configure document templates for a campaign, candidates receive a unique signing link, auto-filled fields populate from their Talkpush profile, and remaining fields are completed and signed by the candidate on any device.</p>
 
             <div class="highlight" style="margin-top:20px;">
                 <strong>Key differentiator:</strong> The signing link is stored as a candidate attribute in Talkpush, enabling it to be sent via any channel the platform already supports &mdash; WhatsApp, SMS, Messenger, email &mdash; through existing automation workflows. No separate sending infrastructure is needed.
+            </div>
+
+            <div class="highlight" style="margin-top:16px;">
+                <strong>Architectural principles:</strong> Talkpush-Sign does NOT send any notifications or reminders &mdash; Talkpush handles all messaging. Campaigns, folders, and candidate attributes are fetched from Talkpush via API. Link expiration is system-wide (configured once in Settings). The dashboard includes deep links to Talkpush campaigns and candidate profiles.
             </div>
 
             <div class="grid-3" style="margin-top:24px;">
@@ -503,48 +508,26 @@
             <table>
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Goal</th>
-                        <th>Metric</th>
-                        <th>Target</th>
-                        <th>Measurement</th>
+                        <th>Description</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td><strong>1</strong></td>
                         <td><strong>Eliminate external costs</strong></td>
-                        <td>Per-envelope cost</td>
-                        <td>$0 (internal cost only)</td>
-                        <td>Finance tracking</td>
+                        <td>Replace DocuSign entirely &mdash; we should no longer need any external e-signature vendor. Per-envelope cost goes from $1.50&ndash;$2.50 (DocuSign) to $0 (internal).</td>
                     </tr>
                     <tr>
+                        <td><strong>2</strong></td>
                         <td><strong>Reduce signing friction</strong></td>
-                        <td>Average candidate signing time</td>
-                        <td>&lt; 60 seconds</td>
-                        <td>Session analytics</td>
+                        <td>Signing links are delivered through Talkpush's own channels (WhatsApp, SMS, email) using the same automation formula the rest of the hiring process already uses. No separate tool, no separate flow.</td>
                     </tr>
                     <tr>
-                        <td><strong>Increase completion rate</strong></td>
-                        <td>Document signing completion rate</td>
-                        <td>&ge; 90% (vs. ~75% with DocuSign)</td>
-                        <td>Status tracking</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Seamless integration</strong></td>
-                        <td>Manual steps to send signing request</td>
-                        <td>0 (fully automated)</td>
-                        <td>Workflow audit</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Legal compliance</strong></td>
-                        <td>Audit trail completeness</td>
-                        <td>100% court-admissible</td>
-                        <td>Legal review</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Mobile-first experience</strong></td>
-                        <td>Mobile signing success rate</td>
-                        <td>&ge; 95%</td>
-                        <td>Device analytics</td>
+                        <td><strong>3</strong></td>
+                        <td><strong>Native product integration</strong></td>
+                        <td>As a native Talkpush product, contracts and other documents can directly use candidate information from Talkpush (auto-filled from candidate attributes), creating a seamless, fully integrated signing experience.</td>
                     </tr>
                 </tbody>
             </table>
@@ -611,8 +594,8 @@
 |  |  +-------------+  +------------+  +------------------+    |   |
 |  |                                                           |   |
 |  |  +-------------+  +------------+  +------------------+    |   |
-|  |  | Signing Link |  | Audit      |  | Reminder         |    |   |
-|  |  | Generator    |  | Logger     |  | Scheduler        |    |   |
+|  |  | Signing Link |  | Audit      |  | Long-Waiter      |    |   |
+|  |  | Generator    |  | Logger     |  | Monitor          |    |   |
 |  |  +-------------+  +------------+  +------------------+    |   |
 |  +-----------------------------------------------------------+   |
 |              |                               |                   |
@@ -893,7 +876,7 @@
                         <td><code>TS-020</code></td>
                         <td>Auto-Fill from Talkpush Attributes</td>
                         <td><span class="p0">P0</span></td>
-                        <td>For any text, number, date, dropdown, or read-only field, the admin can select a <strong>Talkpush candidate attribute</strong> as the data source. When the signing session starts, TalkSign fetches the candidate's current attribute values and populates the fields automatically. Available attributes include all standard and custom fields in the candidate profile.</td>
+                        <td>For any text, number, date, dropdown, or read-only field, the admin can select a <strong>Talkpush candidate attribute</strong> as the data source. When the signing session starts, Talkpush-Sign fetches the candidate's current attribute values and populates the fields automatically. Available attributes include all standard and custom fields in the candidate profile.</td>
                     </tr>
                     <tr>
                         <td><code>TS-021</code></td>
@@ -1134,7 +1117,7 @@
                         <td><span class="p0">P0</span></td>
                         <td>In addition to the URL, the following candidate attributes are maintained and updated in real-time:
                             <ul style="margin-top:8px;">
-                                <li><code>signing_status</code> &mdash; overall status: <em>pending, in_progress, completed, declined, expired, voided</em></li>
+                                <li><code>signing_status</code> &mdash; overall status: <em>pending, viewed, in_progress, completed, declined, expired, voided</em></li>
                                 <li><code>signing_completed_at</code> &mdash; timestamp when all documents were signed</li>
                                 <li><code>signing_documents_total</code> &mdash; number of documents to sign</li>
                                 <li><code>signing_documents_completed</code> &mdash; number signed so far</li>
@@ -1145,7 +1128,7 @@
                         <td><code>TS-053</code></td>
                         <td>Link Expiration</td>
                         <td><span class="p0">P0</span></td>
-                        <td>Signing links have a configurable expiration period (default: 7 days, configurable per campaign: 1-90 days). After expiration, the link shows a "This signing link has expired" message with instructions to contact the recruiter. Status updates to <em>expired</em>.</td>
+                        <td>Signing links have a <strong>system-wide</strong> configurable expiration period (default: 7 days, range: 1-90 days), configured once in Talkpush-Sign Settings. After expiration, the link shows a "This signing link has expired" message with instructions to contact the recruiter. Status updates to <em>expired</em>.</td>
                     </tr>
                     <tr>
                         <td><code>TS-054</code></td>
@@ -1163,14 +1146,14 @@
                         <td><code>TS-056</code></td>
                         <td>Automatic Generation via Workflow</td>
                         <td><span class="p0">P0</span></td>
-                        <td>Signing links are automatically generated when a candidate reaches a specific workflow stage (configurable trigger). No manual action required. The workflow engine triggers TalkSign to create the signing session and populate the attribute.</td>
+                        <td>Signing links are automatically generated when a candidate reaches a specific workflow stage (configurable trigger). No manual action required. The workflow engine triggers Talkpush-Sign to create the signing session and populate the candidate attribute. The attribute to store the signing URL is <strong>configured in Talkpush</strong> (not in Talkpush-Sign).</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="highlight">
-            <strong>Key design decision:</strong> By storing the signing link as a candidate attribute, Talkpush's existing messaging infrastructure handles delivery. The recruiter can send the link via WhatsApp template, SMS, email, chatbot &mdash; whatever channel the candidate is already on. No new sending infrastructure is needed in TalkSign.
+            <strong>Key design decision:</strong> By storing the signing link as a candidate attribute, Talkpush's existing messaging infrastructure handles delivery. The recruiter can send the link via WhatsApp template, SMS, email, chatbot &mdash; whatever channel the candidate is already on. <strong>Talkpush-Sign does NOT send any notifications, reminders, or messages.</strong> All communication to candidates is handled by Talkpush's existing automation engine.
         </div>
     </section>
 
@@ -1190,7 +1173,7 @@
                         <td><code>TS-060</code></td>
                         <td>Real-Time Status Dashboard</td>
                         <td><span class="p0">P0</span></td>
-                        <td>Campaign-level view showing all candidates and their signing status. Filterable by status (pending, viewed, in progress, completed, declined, expired). Sortable columns. Bulk actions (resend reminder, void).</td>
+                        <td>Campaign-level view showing all candidates and their signing status. Filterable by status (pending, viewed, in progress, completed, declined, expired, voided). Sortable columns. Campaign name is a <strong>deep link</strong> that opens the campaign in Talkpush. Each candidate name is a <strong>deep link</strong> to their Talkpush profile. Actions per row: <strong>Copy Link</strong> (copies signing URL to clipboard), void, regenerate. Toolbar: <strong>Export CSV</strong> button to download the candidate table, <strong>Download ZIP</strong> for bulk signed document download.</td>
                     </tr>
                     <tr>
                         <td><code>TS-061</code></td>
@@ -1263,12 +1246,13 @@
         </div>
     </section>
 
-    <!-- ===================== MODULE 7: REMINDERS & EXPIRATION ===================== -->
-    <section id="reminders">
-        <h2 class="section-title">Module 7: Reminders &amp; Expiration</h2>
-        <p class="section-subtitle">Automated follow-ups to maximize signing completion rates</p>
+    <!-- ===================== MODULE 7: LONG-WAITER MONITORING ===================== -->
+    <section id="long-waiter">
+        <h2 class="section-title">Module 7: Long-Waiter Monitoring &amp; Signing Analytics</h2>
+        <p class="section-subtitle">Identify candidates taking too long to sign and surface signing performance metrics</p>
 
         <div class="card">
+            <h3>7.1 Long-Waiter Detection</h3>
             <table>
                 <thead>
                     <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
@@ -1276,30 +1260,64 @@
                 <tbody>
                     <tr>
                         <td><code>TS-070</code></td>
-                        <td>Configurable Reminder Schedule</td>
-                        <td><span class="p0">P0</span></td>
-                        <td>Per campaign, configure an automated reminder schedule for unsigned documents. Define: (1) first reminder (X days/hours after link generation), (2) repeat interval (every X days/hours), (3) maximum number of reminders. Default: first reminder at 24 hours, repeat every 2 days, max 3 reminders.</td>
+                        <td>Configurable Thresholds per Campaign</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>Each campaign config includes two configurable thresholds:
+                            <ul style="margin-top:8px;">
+                                <li><strong>Warning threshold</strong> (<code>long_waiter_warning_hours</code>, default: 48h) &mdash; session flagged with a yellow/orange indicator</li>
+                                <li><strong>Critical threshold</strong> (<code>long_waiter_critical_hours</code>, default: 96h) &mdash; session flagged with a red indicator</li>
+                            </ul>
+                            Thresholds are measured from <code>signing_sessions.created_at</code>. Only non-terminal statuses are evaluated (pending, viewed, in_progress).
+                        </td>
                     </tr>
                     <tr>
                         <td><code>TS-071</code></td>
-                        <td>Reminder Delivery via Talkpush</td>
-                        <td><span class="p0">P0</span></td>
-                        <td>Reminders are sent through <strong>Talkpush's existing messaging automation</strong>, not by TalkSign directly. TalkSign updates the candidate's <code>signing_status</code> attribute and triggers a Talkpush workflow event (e.g., <code>signing_reminder_due</code>). The workflow sends the reminder message via the campaign's configured channel (WhatsApp, SMS, email), including the <code>{{signing_url}}</code> attribute.</td>
+                        <td>Dashboard Long-Waiter Indicators</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>On the signing status dashboard, sessions that exceed warning or critical thresholds display a visual indicator (yellow/orange badge for warning, red badge for critical) next to the candidate name. The dashboard is filterable by long-waiter status.</td>
                     </tr>
                     <tr>
                         <td><code>TS-072</code></td>
                         <td>Expiration Handling</td>
                         <td><span class="p0">P0</span></td>
-                        <td>When a link expires: status updates to <em>expired</em>, candidate sees expiration message if they try to access, a workflow event <code>signing_expired</code> fires (enabling custom automation &mdash; e.g., notify recruiter, send candidate a message, or auto-regenerate link).</td>
-                    </tr>
-                    <tr>
-                        <td><code>TS-073</code></td>
-                        <td>Pre-Expiration Warning</td>
-                        <td><span class="p1">P1</span></td>
-                        <td>X hours/days before expiration, fire a <code>signing_expiring_soon</code> workflow event. Enables sending an urgent "Your documents expire in 24 hours" message to the candidate.</td>
+                        <td>When a link expires (based on system-wide <code>link_expiration_days</code> from Settings): status updates to <em>expired</em>, candidate sees expiration message if they try to access, a workflow event <code>signing_expired</code> fires (enabling custom automation &mdash; e.g., notify recruiter, send candidate a message, or auto-regenerate link).</td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div class="card">
+            <h3>7.2 Signing Analytics</h3>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TS-073</code></td>
+                        <td>Signing Time Metrics</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>Per-campaign analytics showing:
+                            <ul style="margin-top:8px;">
+                                <li><strong>Average completion time</strong> &mdash; mean time from session creation to completion</li>
+                                <li><strong>Median completion time</strong> &mdash; more robust metric, less sensitive to outliers</li>
+                                <li><strong>P95 completion time</strong> &mdash; 95th percentile, highlights tail latency</li>
+                            </ul>
+                            Only completed sessions are included in calculations.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>TS-074</code></td>
+                        <td>Long-Waiter Summary Widget</td>
+                        <td><span class="p1">P1</span></td>
+                        <td>On the campaign dashboard, show a summary widget: total sessions, currently in warning, currently critical, average time to sign, completion rate. This provides admins with an at-a-glance view of signing health.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlight">
+            <strong>Important:</strong> Talkpush-Sign does NOT send reminders or notifications. All follow-up communication to candidates who are taking long to sign is handled by Talkpush's automation engine. Long-waiter monitoring is purely for <em>visibility</em> on the admin dashboard.
         </div>
     </section>
 
@@ -1358,7 +1376,7 @@
     <!-- ===================== DATA MODEL ===================== -->
     <section id="data-model">
         <h2 class="section-title">Data Model</h2>
-        <p class="section-subtitle">Core database schema for TalkSign</p>
+        <p class="section-subtitle">Core database schema for Talkpush-Sign (PostgreSQL)</p>
 
         <div class="card">
             <h3>Entity Relationship</h3>
@@ -1445,14 +1463,12 @@ CREATE TABLE talksign_campaign_configs (
     documents JSONB NOT NULL,
         -- [{"template_id": "...", "order": 1}, ...]
 
-    -- Link settings
-    link_expiration_days INTEGER NOT NULL DEFAULT 7,
+    -- Talkpush folder for signed documents
+    talkpush_folder_id UUID NOT NULL, -- from Talkpush API
 
-    -- Reminder settings
-    reminder_enabled BOOLEAN DEFAULT true,
-    reminder_first_after_hours INTEGER DEFAULT 24,
-    reminder_repeat_every_hours INTEGER DEFAULT 48,
-    reminder_max_count INTEGER DEFAULT 3,
+    -- Long-waiter thresholds
+    long_waiter_warning_hours INTEGER DEFAULT 48,
+    long_waiter_critical_hours INTEGER DEFAULT 96,
 
     -- Identity verification
     identity_verification_enabled BOOLEAN DEFAULT false,
@@ -1504,9 +1520,6 @@ CREATE TABLE talksign_signing_sessions (
     identity_verified_at TIMESTAMPTZ,
     identity_verification_method VARCHAR(20),
 
-    -- Reminders
-    reminders_sent INTEGER DEFAULT 0,
-    last_reminder_sent_at TIMESTAMPTZ
 );
 
 -- Signing Documents (one per document in session)
@@ -1559,7 +1572,7 @@ CREATE TABLE talksign_audit_log (
         -- signature_captured, initials_captured,
         -- document_signed, document_declined,
         -- session_completed, pdf_generated,
-        -- reminder_triggered, link_expired, link_voided,
+        -- link_expired, link_voided,
         -- link_regenerated, identity_verified
 
     event_data JSONB, -- event-specific payload
@@ -1576,6 +1589,16 @@ CREATE TABLE talksign_audit_log (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- System-Wide Settings (one row per organization)
+CREATE TABLE talksign_settings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organization_id UUID NOT NULL UNIQUE,
+    link_expiration_days INTEGER NOT NULL DEFAULT 7,
+        -- System-wide expiration (1-90 days)
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Indexes
 CREATE INDEX idx_templates_org ON talksign_templates(organization_id);
 CREATE INDEX idx_templates_status ON talksign_templates(status);
@@ -1589,14 +1612,15 @@ CREATE INDEX idx_documents_session ON talksign_signing_documents(session_id);
 CREATE INDEX idx_documents_status ON talksign_signing_documents(status);
 CREATE INDEX idx_audit_session ON talksign_audit_log(session_id);
 CREATE INDEX idx_audit_event ON talksign_audit_log(event_type);
-CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
+CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);
+CREATE INDEX idx_settings_org ON talksign_settings(organization_id);</code></pre>
         </div>
     </section>
 
     <!-- ===================== API DESIGN ===================== -->
     <section id="api">
         <h2 class="section-title">API Design</h2>
-        <p class="section-subtitle">RESTful API endpoints for TalkSign</p>
+        <p class="section-subtitle">RESTful API endpoints for Talkpush-Sign</p>
 
         <div class="card">
             <h3>Admin API (Internal &mdash; Talkpush Platform)</h3>
@@ -1626,8 +1650,29 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                     <tr><td><code>GET</code></td><td><code>/api/talksign/sessions/{id}/audit</code></td><td>Get audit trail for session</td></tr>
                     <tr><td><code>GET</code></td><td><code>/api/talksign/sessions/{id}/documents/{docId}/pdf</code></td><td>Download signed PDF</td></tr>
                     <tr><td><code>GET</code></td><td><code>/api/talksign/sessions/{id}/certificate</code></td><td>Download Certificate of Completion</td></tr>
-                    <tr><td colspan="3" style="background:#F5F7FA; font-weight:600;">Dashboard</td></tr>
-                    <tr><td><code>GET</code></td><td><code>/api/talksign/campaigns/{campaignId}/status</code></td><td>Campaign signing dashboard data</td></tr>
+                    <tr><td colspan="3" style="background:#F5F7FA; font-weight:600;">Dashboard &amp; Export</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/campaigns/{campaignId}/status</code></td><td>Campaign signing dashboard data (includes deep links to Talkpush)</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/campaigns/{campaignId}/export</code></td><td>Export candidate signing table as CSV</td></tr>
+                    <tr><td><code>POST</code></td><td><code>/api/talksign/campaigns/{campaignId}/download-zip</code></td><td>Bulk download signed PDFs + certificates as ZIP</td></tr>
+                    <tr><td colspan="3" style="background:#F5F7FA; font-weight:600;">System-Wide Settings</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talksign/settings</code></td><td>Get organization-wide Talkpush-Sign settings (link expiration)</td></tr>
+                    <tr><td><code>PUT</code></td><td><code>/api/talksign/settings</code></td><td>Update organization-wide settings. Requires <code>talksign.settings.manage</code> permission.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>Talkpush Integration API (Read-only &mdash; Data from Talkpush)</h3>
+            <p>Talkpush-Sign calls these Talkpush endpoints to fetch campaigns, folders, and candidate attributes. These are <strong>read-only</strong> calls from Talkpush-Sign's perspective.</p>
+            <table style="margin-top:12px;">
+                <thead>
+                    <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>GET</code></td><td><code>/api/talkpush/campaigns</code></td><td>List Talkpush campaigns (for campaign picker when configuring signing)</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talkpush/folders</code></td><td>List Talkpush folders (for folder picker when configuring signed document storage)</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talkpush/candidate-attributes</code></td><td>List all available candidate attributes (for data mapping / auto-fill field configuration)</td></tr>
+                    <tr><td><code>GET</code></td><td><code>/api/talkpush/candidates/{id}</code></td><td>Get candidate profile and attribute values (for auto-filling fields at signing time)</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1653,7 +1698,7 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
 
         <div class="card">
             <h3>Talkpush Workflow Events (Outbound)</h3>
-            <p>TalkSign fires the following events into the Talkpush workflow engine, enabling automation:</p>
+            <p>Talkpush-Sign fires the following events into the Talkpush workflow engine, enabling automation:</p>
             <table style="margin-top:12px;">
                 <thead>
                     <tr><th>Event</th><th>Trigger</th><th>Payload</th></tr>
@@ -1664,8 +1709,6 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                     <tr><td><code>signing_document_signed</code></td><td>Candidate signs one document</td><td>candidate_id, document_name, completed_count, total_count</td></tr>
                     <tr><td><code>signing_session_completed</code></td><td>All documents signed</td><td>candidate_id, session_id, completed_at, signed_pdf_urls</td></tr>
                     <tr><td><code>signing_document_declined</code></td><td>Candidate declines a document</td><td>candidate_id, document_name, reason, comment</td></tr>
-                    <tr><td><code>signing_reminder_due</code></td><td>Scheduled reminder is due</td><td>candidate_id, reminder_number, signing_url</td></tr>
-                    <tr><td><code>signing_expiring_soon</code></td><td>X hours before expiration</td><td>candidate_id, expires_at, signing_url</td></tr>
                     <tr><td><code>signing_expired</code></td><td>Link expired without completion</td><td>candidate_id, expired_at, documents_completed, documents_total</td></tr>
                 </tbody>
             </table>
@@ -1719,10 +1762,49 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
         </div>
     </section>
 
-    <!-- ===================== TALKPUSH INTEGRATION ===================== -->
+    <!-- ===================== TALKPUSH INTEGRATION ARCHITECTURE ===================== -->
     <section id="integration">
-        <h2 class="section-title">Talkpush Platform Integration</h2>
-        <p class="section-subtitle">How TalkSign fits into the Talkpush ecosystem</p>
+        <h2 class="section-title">Talkpush Integration Architecture</h2>
+        <p class="section-subtitle">How Talkpush-Sign integrates with the Talkpush platform &mdash; key architectural principles</p>
+
+        <div class="card">
+            <h3>Key Architectural Principles</h3>
+            <table>
+                <thead>
+                    <tr><th>Principle</th><th>Detail</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Notifications are handled by Talkpush</strong></td>
+                        <td>Talkpush-Sign does NOT send any notifications, reminders, or messages. All communication to candidates (reminders, signing links, follow-ups) is handled by Talkpush's existing messaging/automation engine. Talkpush-Sign simply stores the signing link in a candidate attribute.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Signing link stored as candidate attribute</strong></td>
+                        <td>When a signing session is created, the signing URL is stored as a Talkpush candidate attribute. The attribute is <strong>configured in Talkpush</strong> (not in Talkpush-Sign) and used in Talkpush's automated messages, WhatsApp flows, SMS, email templates, etc.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Campaigns come from Talkpush</strong></td>
+                        <td>Talkpush-Sign does not create campaigns. Campaigns are fetched from Talkpush via API (<code>GET /api/talkpush/campaigns</code>). When configuring document signing, admins select from the list of existing Talkpush campaigns.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Candidate attributes come from Talkpush</strong></td>
+                        <td>When mapping template fields to candidate data, the full list of candidate attributes is fetched from Talkpush via <code>GET /api/talkpush/candidate-attributes</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Folders come from Talkpush</strong></td>
+                        <td>Each campaign configuration requires assigning a destination folder (for organizing signed documents). Folders are fetched from Talkpush via <code>GET /api/talkpush/folders</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Link expiration is system-wide</strong></td>
+                        <td>Link expiration is configured once in Talkpush-Sign's <strong>Settings</strong> section (<code>GET/PUT /api/talksign/settings</code>) and applies to all campaigns. Not per-campaign.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Deep links to Talkpush</strong></td>
+                        <td>Campaigns and candidates in Talkpush-Sign's dashboard include clickable links that open the corresponding campaign or candidate profile in Talkpush.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div class="card">
             <h3>Integration Points</h3>
@@ -1734,27 +1816,32 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                     <tr>
                         <td><strong>Candidate Attributes</strong></td>
                         <td>Read &amp; Write</td>
-                        <td><strong>Read:</strong> Auto-fill fields from candidate profile attributes. <strong>Write:</strong> Store <code>signing_url</code>, <code>signing_status</code>, <code>signing_completed_at</code>, and other status attributes. Optionally write back candidate-entered values to profile.</td>
+                        <td><strong>Read:</strong> Auto-fill fields from candidate profile attributes (fetched from Talkpush API). <strong>Write:</strong> Store <code>signing_url</code>, <code>signing_status</code>, <code>signing_completed_at</code>, and other status attributes. Optionally write back candidate-entered values to profile.</td>
                     </tr>
                     <tr>
-                        <td><strong>Campaign Configuration</strong></td>
+                        <td><strong>Campaigns</strong></td>
                         <td>Read</td>
-                        <td>TalkSign reads campaign settings to determine which documents to include, link expiration, reminder schedule, and branding.</td>
+                        <td>Campaign list is fetched from Talkpush via API. Talkpush-Sign reads campaign data to populate the campaign selector in the configuration UI. Deep links from Talkpush-Sign dashboard back to Talkpush campaigns.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Folders</strong></td>
+                        <td>Read</td>
+                        <td>Folder list is fetched from Talkpush via API. Admins select a destination folder for signed documents when configuring a campaign.</td>
                     </tr>
                     <tr>
                         <td><strong>Workflow Engine</strong></td>
                         <td>Bidirectional</td>
-                        <td><strong>Inbound:</strong> Workflow triggers signing session creation (e.g., when candidate reaches "Offer Accepted" stage). <strong>Outbound:</strong> TalkSign fires events (<code>signing_session_completed</code>, <code>signing_expired</code>, etc.) that the workflow engine can act on (advance stage, send notification, etc.).</td>
+                        <td><strong>Inbound:</strong> Workflow triggers signing session creation (e.g., when candidate reaches "Offer Accepted" stage). <strong>Outbound:</strong> Talkpush-Sign fires events (<code>signing_session_completed</code>, <code>signing_expired</code>, etc.) that the workflow engine can act on (advance stage, send notification, etc.).</td>
                     </tr>
                     <tr>
                         <td><strong>Messaging Channels</strong></td>
                         <td>Indirect (via attributes)</td>
-                        <td>TalkSign does NOT send messages directly. The signing URL is stored as an attribute, and Talkpush's messaging (WhatsApp, SMS, email, chatbot) references it: <code>"Please sign your documents here: {{signing_url}}"</code></td>
+                        <td>Talkpush-Sign does NOT send messages directly. The signing URL is stored as an attribute, and Talkpush's messaging (WhatsApp, SMS, email, chatbot) references it: <code>"Please sign your documents here: {{signing_url}}"</code></td>
                     </tr>
                     <tr>
                         <td><strong>Candidate Profile UI</strong></td>
                         <td>Read</td>
-                        <td>The candidate profile in the Talkpush recruiter dashboard shows a "Documents" section displaying TalkSign status, signed documents, and download links.</td>
+                        <td>The candidate profile in the Talkpush recruiter dashboard shows a "Documents" section displaying Talkpush-Sign status, signed documents, and download links.</td>
                     </tr>
                     <tr>
                         <td><strong>HRIS Export</strong></td>
@@ -1763,6 +1850,32 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                     </tr>
                 </tbody>
             </table>
+        </div>
+    </section>
+
+    <!-- ===================== SYSTEM-WIDE SETTINGS ===================== -->
+    <section id="settings">
+        <h2 class="section-title">System-Wide Settings</h2>
+        <p class="section-subtitle">Organization-level configuration that applies across all campaigns</p>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr><th>Setting</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Link Expiration Days</strong></td>
+                        <td>Integer (1&ndash;90)</td>
+                        <td>7 days</td>
+                        <td>Number of days after which signing links expire. Applies to all campaigns. Configured once in Talkpush-Sign Settings (accessible to users with <code>talksign.settings.manage</code> permission).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlight">
+            <strong>Why system-wide?</strong> Link expiration is not a per-campaign decision &mdash; it is an organization policy. Keeping it in one place reduces configuration errors and ensures consistency. Future settings (e.g., retention policies, default branding) will be added to this section.
         </div>
     </section>
 
@@ -1790,18 +1903,19 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
             </div>
             <ul class="ac-list">
                 <li>Each field has a data source selector: "Auto-fill from attribute" or "Candidate fills in"</li>
-                <li>Attribute picker shows all candidate attributes grouped by category</li>
+                <li>Attribute picker shows all candidate attributes fetched from Talkpush API, grouped by category</li>
                 <li>Auto-filled fields can be set as read-only or editable by candidate</li>
                 <li>Missing attributes show a fallback value or prompt candidate to fill in</li>
             </ul>
 
             <div class="user-story" style="margin-top:24px;">
-                <p><strong>US-03:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> select which documents a candidate must sign for a specific campaign, <span class="so">so that</span> different roles/locations get the appropriate document set.</p>
+                <p><strong>US-03:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> select which documents a candidate must sign for a specific campaign and assign a destination folder, <span class="so">so that</span> different roles/locations get the appropriate document set with organized storage.</p>
             </div>
             <ul class="ac-list">
-                <li>Campaign configuration screen lists all active templates</li>
+                <li>Campaign selector shows campaigns fetched from Talkpush API</li>
                 <li>Recruiter selects and orders the documents for the campaign</li>
-                <li>Can configure link expiration, reminder schedule per campaign</li>
+                <li>Recruiter assigns a Talkpush folder (fetched via API) for signed document storage</li>
+                <li>Link expiration is system-wide (from Settings), not configured per campaign</li>
                 <li>Changes to campaign config apply to new signing sessions only (existing sessions unchanged)</li>
             </ul>
 
@@ -1809,10 +1923,12 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                 <p><strong>US-04:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> see a dashboard of all candidates' signing status for my campaign, <span class="so">so that</span> I can follow up on incomplete signatures and track onboarding progress.</p>
             </div>
             <ul class="ac-list">
-                <li>Campaign dashboard shows all candidates with signing status (pending, viewed, in progress, completed, declined, expired)</li>
-                <li>Filterable and sortable by status, date, candidate name</li>
+                <li>Campaign dashboard shows all candidates with signing status (pending, viewed, in progress, completed, declined, expired, voided)</li>
+                <li>Campaign name is a deep link to Talkpush; candidate names are deep links to their Talkpush profiles</li>
+                <li>Filterable and sortable by status, date, candidate name, long-waiter indicators</li>
                 <li>Click on candidate to see per-document detail and audit trail</li>
-                <li>Bulk actions: resend reminder, void, regenerate link</li>
+                <li>Row actions: Copy Link, void, regenerate link</li>
+                <li>Toolbar: Export CSV, Download ZIP (bulk signed documents)</li>
             </ul>
 
             <div class="user-story" style="margin-top:24px;">
@@ -1822,6 +1938,35 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                 <li>Candidate profile shows "Signed Documents" section with download buttons</li>
                 <li>Can download individual signed PDFs or a ZIP of all documents + certificate</li>
                 <li>Certificate of Completion includes signer info, timestamps, IP addresses, tamper-evident hash</li>
+            </ul>
+
+            <div class="user-story" style="margin-top:24px;">
+                <p><strong>US-05b:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> export the candidate signing table as CSV and bulk-download signed documents as a ZIP, <span class="so">so that</span> I can share signing data with HR and maintain offline records.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Export CSV button on the campaign dashboard exports all visible candidates with their signing status, timestamps, and document counts</li>
+                <li>Download ZIP button creates a ZIP archive containing signed PDFs and certificates for all completed sessions in the campaign</li>
+                <li>Both actions require the <code>talksign.export</code> permission</li>
+            </ul>
+
+            <div class="user-story" style="margin-top:24px;">
+                <p><strong>US-05c:</strong> <span class="as">As an</span> admin, <span class="want">I want to</span> configure system-wide signing link expiration in Talkpush-Sign Settings, <span class="so">so that</span> all campaigns use a consistent expiration policy without per-campaign configuration.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Settings page shows current link expiration (default: 7 days)</li>
+                <li>Admin can update expiration to any value between 1 and 90 days</li>
+                <li>Changes apply to new signing sessions only; existing sessions keep their original expiration</li>
+                <li>Requires <code>talksign.settings.manage</code> permission</li>
+            </ul>
+
+            <div class="user-story" style="margin-top:24px;">
+                <p><strong>US-05d:</strong> <span class="as">As a</span> recruiter, <span class="want">I want to</span> see which candidates are taking unusually long to sign (long-waiters), <span class="so">so that</span> I can take proactive action using Talkpush's automation or manual follow-up.</p>
+            </div>
+            <ul class="ac-list">
+                <li>Dashboard shows warning (yellow) and critical (red) indicators for sessions exceeding configurable thresholds</li>
+                <li>Thresholds are configured per campaign (default: 48h warning, 96h critical)</li>
+                <li>Signing analytics show average, median, and P95 completion times per campaign</li>
+                <li>Long-waiter filter on dashboard lets recruiters focus on problematic sessions</li>
             </ul>
         </div>
 
@@ -1886,8 +2031,11 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                 <div class="wireframe-header">Layout Specification</div>
                 <p><strong>Structure:</strong> Settings page within campaign configuration, under a "Document Signing" tab</p>
                 <ul style="margin-top:12px;">
+                    <li><strong>Campaign Selector:</strong> Dropdown populated from Talkpush API (<code>GET /api/talkpush/campaigns</code>). Shows campaign name and ID.</li>
                     <li><strong>Documents Section:</strong> Drag-and-drop ordered list of selected templates. Each row shows: drag handle, document name, category badge, field count, "Preview" and "Remove" actions. "Add Document" button (Talkpush Green) opens template picker modal.</li>
-                    <li><strong>Settings Section:</strong> Link expiration (dropdown: 1-90 days), reminder toggle with configuration (first after X hours, repeat every X hours, max count), identity verification toggle with method selector.</li>
+                    <li><strong>Folder Selector:</strong> Dropdown populated from Talkpush API (<code>GET /api/talkpush/folders</code>). Required field &mdash; determines where signed documents are stored in Talkpush.</li>
+                    <li><strong>Long-Waiter Thresholds:</strong> Warning hours (default: 48), Critical hours (default: 96). Numeric inputs.</li>
+                    <li><strong>Settings Section:</strong> Identity verification toggle with method selector. <em>Note: Link expiration is system-wide (configured in Settings, not here).</em></li>
                     <li><strong>Branding Section:</strong> Logo upload, primary color picker (defaults to Talkpush Green).</li>
                     <li><strong>Primary CTA:</strong> "Save Configuration" (Talkpush Green) at bottom.</li>
                 </ul>
@@ -1900,10 +2048,12 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                 <div class="wireframe-header">Layout Specification</div>
                 <p><strong>Structure:</strong> Data table with filters, following the Talkpush table pattern</p>
                 <ul style="margin-top:12px;">
-                    <li><strong>Summary Bar:</strong> Status counts as pill badges &mdash; Completed (green), In Progress (blue), Pending (gray), Declined (red), Expired (orange). Click to filter.</li>
-                    <li><strong>Table Columns:</strong> Candidate Name, Status (color-coded badge), Documents (3/5 format with progress bar), Link Sent (date), Last Activity (date), Actions (three-dot menu: view, resend, void, regenerate).</li>
-                    <li><strong>Filters:</strong> Status dropdown, date range picker, search by candidate name.</li>
-                    <li><strong>Bulk Actions:</strong> Checkbox column, "Send Reminder" and "Void Selected" buttons appear when items are selected.</li>
+                    <li><strong>Campaign Header:</strong> Campaign name as a <strong>deep link</strong> to Talkpush. Next to it: signing analytics summary (avg completion time, completion rate).</li>
+                    <li><strong>Toolbar:</strong> "Export CSV" button, "Download ZIP" button (Talkpush Green). Long-waiter summary widget (warning count, critical count).</li>
+                    <li><strong>Summary Bar:</strong> Status counts as pill badges &mdash; Completed (green), In Progress (blue), Pending (gray), Viewed (light blue), Declined (red), Expired (orange), Voided (dark gray). Click to filter.</li>
+                    <li><strong>Table Columns:</strong> Candidate Name (<strong>deep link</strong> to Talkpush profile), Status (color-coded badge), Long-Waiter indicator (yellow/red badge if applicable), Documents (3/5 format with progress bar), Created (date), Last Activity (date), Actions (three-dot menu: Copy Link, void, regenerate).</li>
+                    <li><strong>Filters:</strong> Status dropdown, long-waiter filter (all / warning / critical), date range picker, search by candidate name.</li>
+                    <li><strong>Bulk Actions:</strong> Checkbox column, "Void Selected" button appears when items are selected.</li>
                 </ul>
             </div>
         </div>
@@ -1942,14 +2092,17 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                             <ul>
                                 <li>Template upload (PDF) + visual field placement</li>
                                 <li>Field types: Signature, Text, Number, Date, Dropdown, Checkbox, Read-Only, Auto-Date</li>
+                                <li>Talkpush Integration API (campaigns, folders, candidate attributes)</li>
                                 <li>Auto-fill from Talkpush attributes + candidate input</li>
-                                <li>Campaign document selection</li>
+                                <li>Campaign document selection + folder assignment</li>
+                                <li>System-wide settings (link expiration)</li>
                                 <li>Signing link generation + candidate attribute storage</li>
                                 <li>Mobile-first signing UI with guided flow</li>
                                 <li>E-disclosure consent</li>
                                 <li>Signed PDF generation + storage</li>
                                 <li>Basic audit trail</li>
-                                <li>Status tracking (session + document level)</li>
+                                <li>Status tracking (7 statuses: pending, viewed, in_progress, completed, declined, expired, voided)</li>
+                                <li>Dashboard with deep links to Talkpush + Copy Link action</li>
                                 <li>Workflow events (session_created, completed, declined, expired)</li>
                                 <li>Candidate download of signed documents</li>
                             </ul>
@@ -1958,20 +2111,21 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                     </tr>
                     <tr>
                         <td><strong>Phase 2: Complete</strong></td>
-                        <td>Full feature parity + enhancements</td>
+                        <td>Full feature set + export</td>
                         <td>
                             <ul>
                                 <li>Initials field type, Text Area, Radio Buttons</li>
                                 <li>Certificate of Completion PDF</li>
-                                <li>Reminder automation (configurable schedule)</li>
-                                <li>Link expiration + regeneration</li>
+                                <li>Link expiration handling + regeneration</li>
                                 <li>Save &amp; resume (partial signing)</li>
                                 <li>Template versioning + duplication</li>
                                 <li>Attribute writeback</li>
+                                <li>Export CSV + Download ZIP (bulk signed documents)</li>
+                                <li>Long-waiter monitoring with configurable thresholds</li>
+                                <li>Signing analytics (avg, median, P95 completion time)</li>
                                 <li>Signing status dashboard with bulk actions</li>
                                 <li>Audit log viewer (admin)</li>
                                 <li>Multi-language UI</li>
-                                <li>Bulk download (ZIP)</li>
                                 <li>Candidate email copy of signed docs</li>
                             </ul>
                         </td>
@@ -1988,7 +2142,7 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                                 <li>Retention policies</li>
                                 <li>GDPR data export/deletion</li>
                                 <li>HRIS export integration (signed PDFs to Workday/SAP)</li>
-                                <li>Advanced analytics (signing time, drop-off analysis)</li>
+                                <li>Advanced analytics (signing time, drop-off analysis, funnel metrics)</li>
                             </ul>
                         </td>
                         <td>4&ndash;6 weeks</td>
@@ -2036,7 +2190,7 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
                         <td><strong>Migration from DocuSign for existing clients</strong></td>
                         <td>Medium</td>
                         <td>High</td>
-                        <td>Run TalkSign in parallel with DocuSign initially. Provide migration tooling to recreate templates. Keep DocuSign integration as fallback for clients not ready to switch. Phase out gradually.</td>
+                        <td>Run Talkpush-Sign in parallel with DocuSign initially. Provide migration tooling to recreate templates. Keep DocuSign as fallback for clients not ready to switch. Phase out gradually.</td>
                     </tr>
                     <tr>
                         <td><strong>Mobile signing UX on low-end devices</strong></td>
@@ -2051,7 +2205,7 @@ CREATE INDEX idx_audit_time ON talksign_audit_log(created_at);</code></pre>
 
     <!-- Footer -->
     <div style="text-align:center; padding:40px 0; color:var(--text-muted); font-size:12px; border-top:1px solid var(--border-light); margin-top:40px;">
-        <p>Talk<span style="color:var(--talkpush-green); font-weight:600;">Sign</span> &mdash; Product Requirements Document v1.0</p>
+        <p>Talkpush-<span style="color:var(--talkpush-green); font-weight:600;">Sign</span> &mdash; Product Requirements Document v1.0</p>
         <p style="margin-top:4px;">Talkpush &copy; 2026 &mdash; Confidential</p>
     </div>
 
